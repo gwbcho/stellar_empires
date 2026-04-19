@@ -170,27 +170,44 @@ func _process(_delta):
 	# Sync Galaxy Map Fleet Indicators Dynamically exactly explicitly tracking logical arrays universally!
 	if is_instance_valid(fleet_manager):
 		for i in range(star_data.size()):
-			if star_data[i].has("fleet_icon"):
-				var icon = star_data[i]["fleet_icon"]
-				if is_instance_valid(icon):
-					var has_fleets = false
-					var is_moving = false
+			if star_data[i].has("fleet_icon") and star_data[i].has("constructor_icon"):
+				var m_icon = star_data[i]["fleet_icon"]
+				var c_icon = star_data[i]["constructor_icon"]
+				
+				if is_instance_valid(m_icon) and is_instance_valid(c_icon):
+					var has_military = false
+					var has_constructor = false
+					var is_m_moving = false
+					var is_c_moving = false
+					
 					for f in fleet_manager.global_fleets:
 						if f["system_index"] == i:
-							has_fleets = true
-							if f["is_moving"]: is_moving = true
+							if f.has("fleet_class") and f["fleet_class"] == "construction":
+								has_constructor = true
+								if f["is_moving"]: is_c_moving = true
+							else:
+								has_military = true
+								if f["is_moving"]: is_m_moving = true
+								
+					var show_m = has_military
+					var show_c = has_constructor
 					
-					var should_show = has_fleets
-					
-					# Physically enforce native system view constraints explicitly preventing tracking bounds rendering internally strictly!
 					if i == fleet_manager.current_rendered_system:
-						should_show = false
+						show_m = false
+						show_c = false
+						
+					m_icon.visible = show_m
+					c_icon.visible = show_c
 					
-					icon.visible = should_show
-					if is_moving:
-						icon.rotation.z = -PI/2
+					if is_m_moving:
+						m_icon.rotation.z = -PI/2
 					else:
-						icon.rotation.z = 0
+						m_icon.rotation.z = 0
+						
+					if is_c_moving:
+						c_icon.rotation.z = -PI/2
+					else:
+						c_icon.rotation.z = 0
 
 # --- Procedural Data Generation ---
 
@@ -261,7 +278,8 @@ func initialize_starting_fleets():
 			break
 			
 	if is_instance_valid(fleet_manager):
-		fleet_manager.create_fleet(sol_index, earth_orbit_pos)
+		# Directly inject a Constructor Fleet precisely mimicking standard game start conditions structurally!
+		fleet_manager.create_fleet(sol_index, earth_orbit_pos, "construction")
 
 func generate_stars():
 	star_data.clear()
@@ -571,40 +589,57 @@ func visualize_galaxy():
 			icon.font_size = 400
 			icon.modulate = Color(0.2, 1.0, 0.5)
 			
-			# Flawlessly globally calculate exact 3D geometric edge explicitly bounding strictly mathematically explicitly symmetrically!
-			var l_offset_x = -(exact_text.length() * 1.1) - 2.5
-			icon.position = Vector3(l_offset_x, -final_size * 4.0 - 5.0, 0.12)
+			# Natively place Habitable icon left of the actual star, pulled to Z=0.0 to sit neutrally behind UI depth!
+			var l_offset_x = -final_size * 2.2 - 1.5
+			icon.position = Vector3(l_offset_x, 0.0, 0.0)
 			icon.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 			icon.visibility_range_end = 250.0 
 			icon.visibility_range_end_margin = 10.0
 			icon.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 			icon.extra_cull_margin = 16000.0 
-			icon.offset = Vector2.ZERO # Absolute purge of chaotic pixel offsets mathematically explicitly universally!
+			icon.offset = Vector2.ZERO 
 			
 			area.add_child(icon)
 			ui_nodes.append(icon)
 			
+		# Military Fleet (Right of Star)
 		var ship_sprite = Sprite3D.new()
 		var fleet_img = Image.new()
 		if fleet_img.load("res://Resources/fleet_icon.png") == OK:
 			ship_sprite.texture = ImageTexture.create_from_image(fleet_img)
 			
-		# Perfectly scale 3D bounds exactly anchoring logically natively against the dynamic plate boundaries organically!
-		var s_offset_x = (exact_text.length() * 1.1) + 2.5 # Exactly identically physically mirrored against the Habitable icon symmetrically natively!
-		ship_sprite.position = Vector3(s_offset_x, -final_size * 4.0 - 5.0, 0.12)
+		var r_offset_x = final_size * 2.2 + 1.5 
+		ship_sprite.position = Vector3(r_offset_x, 0.0, 0.0)
 		ship_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		ship_sprite.visibility_range_end = 250.0 
 		ship_sprite.visibility_range_end_margin = 10.0
 		ship_sprite.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
 		ship_sprite.extra_cull_margin = 16000.0
-		
-		# Tightly scale native 1024 resolution perfectly gracefully into UI boundaries strictly
 		ship_sprite.pixel_size = 0.003 
 		ship_sprite.visible = false 
 		
 		area.add_child(ship_sprite)
 		ui_nodes.append(ship_sprite)
 		star["fleet_icon"] = ship_sprite
+		
+		# Constructor Fleet (Slightly further Right of Military Fleet)
+		var const_sprite = Sprite3D.new()
+		var const_img = Image.new()
+		if const_img.load("res://Resources/constructor_icon.png") == OK:
+			const_sprite.texture = ImageTexture.create_from_image(const_img)
+			
+		const_sprite.position = Vector3(r_offset_x, 0.0, 0.0)
+		const_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		const_sprite.visibility_range_end = 250.0 
+		const_sprite.visibility_range_end_margin = 10.0
+		const_sprite.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+		const_sprite.extra_cull_margin = 16000.0
+		const_sprite.pixel_size = 0.003 
+		const_sprite.visible = false 
+		
+		area.add_child(const_sprite)
+		ui_nodes.append(const_sprite)
+		star["constructor_icon"] = const_sprite
 		
 		star["ui_plate_nodes"] = ui_nodes
 		

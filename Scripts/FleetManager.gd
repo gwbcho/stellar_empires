@@ -324,14 +324,15 @@ func _get_waypoint_shader() -> ShaderMaterial:
 	return mat.duplicate()
 
 # --- Orchestration Methods ---
-func create_fleet(sys_index: int, start_local_pos: Vector3):
+func create_fleet(sys_index: int, start_local_pos: Vector3, fleet_class: String = "military"):
 	var data = {
 		"system_index": sys_index,
 		"local_pos": Vector3(start_local_pos.x, 15.0, start_local_pos.z),
 		"target_pos": Vector3(start_local_pos.x, 15.0, start_local_pos.z),
 		"is_moving": false,
 		"speed": 18.0,
-		"selected": false
+		"selected": false,
+		"fleet_class": fleet_class
 	}
 	global_fleets.append(data)
 

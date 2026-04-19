@@ -1,8 +1,9 @@
 63f7b34db8d8cdea90c76aacccf841ec
 ::res://::1776579633
 script_test.gd::GDScript::1721608600766918458::1776559456::0::1::::<>RefCounted<><>0<>0<><>::
-::res://Resources/::1776585213
+::res://Resources/::1776629022
 accretion_disk.jpg::CompressedTexture2D::8941352526275452472::1776471697::1776471747::1::::<><><>0<>0<>84f3dd6d2b8013dd8a27cdc13d325a42<>res://.godot/imported/accretion_disk.jpg-4814ddb6f781219b363e780b0460d657.ctex::
+constructor_icon.png::CompressedTexture2D::2611007898648517983::1776629491::1776629522::1::::<><><>0<>0<>850dce21605f6c507884a20e4b9e9925<>res://.godot/imported/constructor_icon.png-a9305fb08884df29ab24d8edac96bd57.ctex::
 fleet_icon.png::CompressedTexture2D::2957501230386666523::1776556561::1776556378::0::::<><><>0<>0<>ecc77598098f8488a6bb70070da20617<>::
 icon_alloys.png::CompressedTexture2D::1235525208707086860::1776585055::1776585238::1::::<><><>0<>0<>9eb12ed94a5fb78e98f16e00bab1a25e<>res://.godot/imported/icon_alloys.png-c5583cc7ad6ab6dcf39d2d06f73049f7.ctex::
 icon_control.png::CompressedTexture2D::2030806627341313879::1776585140::1776585238::1::::<><><>0<>0<>57fc6fdf7047ce30fbb5ebcbebe6ef88<>res://.godot/imported/icon_control.png-546d55ed2c8250d3def9a689177e0d39.ctex::
@@ -19,7 +20,7 @@ Main.tscn::PackedScene::141823155825462846::1776493718::0::1::::<><><>0<>0<><>::
 ::res://Scripts/::1776552819
 CameraController.gd::GDScript::4540729580890086164::1776555415::0::1::::CameraController<>Camera3D<><>0<>0<><>::
 FleetManager.gd::GDScript::7617959189944151479::1776582253::0::1::::FleetManager<>Node3D<><>0<>0<><>::
-GalaxyGenerator.gd::GDScript::5713005417608538804::1776582268::0::1::::GalaxyGenerator<>Node3D<><>0<>0<><>::
+GalaxyGenerator.gd::GDScript::5713005417608538804::1776629388::0::1::::GalaxyGenerator<>Node3D<><>0<>0<><>::
 TechSystem.gd::GDScript::7043487090305563852::1776465351::0::1::::TechSystem<>Node<><>0<>0<><>::
 UIManager.gd::GDScript::5689890067149327395::1776584585::0::1::::UIManager<>CanvasLayer<><>0<>0<><>::
 ::res://Shaders/::1776580179
