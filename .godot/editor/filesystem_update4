@@ -1,0 +1,4 @@
+res://Scripts/GalaxyGenerator.gd
+res://Scripts/CameraController.gd
+res://Scripts/ModularShip.gd
+res://Scripts/FleetManager.gd
