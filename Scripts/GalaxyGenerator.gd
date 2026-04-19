@@ -699,7 +699,7 @@ func set_galactic_view():
 			arr.billboard = BaseMaterial3D.BILLBOARD_DISABLED
 			arr.rotation.x = -PI/2
 			arr.rotation.y = atan2(-inward_dir.z, inward_dir.x)
-			arr.position = outward_dir * 25.0
+			arr.position = outward_dir * 12.0
 			galaxy_return_marker.add_child(arr)
 			
 		# Visually pulsing the tracking matrix explicitly so it can never be mistaken for generic stars
