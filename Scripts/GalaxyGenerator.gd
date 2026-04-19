@@ -585,9 +585,9 @@ func visualize_galaxy():
 			ui_nodes.append(icon)
 			
 		var ship_sprite = Sprite3D.new()
-		var img = Image.new()
-		if img.load("res://Resources/fleet_icon.png") == OK:
-			ship_sprite.texture = ImageTexture.create_from_image(img)
+		var fleet_img = Image.new()
+		if fleet_img.load("res://Resources/fleet_icon.png") == OK:
+			ship_sprite.texture = ImageTexture.create_from_image(fleet_img)
 			
 		# Perfectly scale 3D bounds exactly anchoring logically natively against the dynamic plate boundaries organically!
 		var s_offset_x = (exact_text.length() * 1.1) + 2.5 # Exactly identically physically mirrored against the Habitable icon symmetrically natively!
@@ -629,10 +629,10 @@ func visualize_galaxy():
 		immediate_mesh.surface_add_vertex(star_data[lane.y]["pos"])
 	immediate_mesh.surface_end()
 	
-	var img = Image.new()
-	var err = img.load("res://Resources/milky_way_backdrop.png")
+	var mw_bg_img = Image.new()
+	var err = mw_bg_img.load("res://Resources/milky_way_backdrop.png")
 	if err == OK:
-		var backdrop_texture = ImageTexture.create_from_image(img)
+		var backdrop_texture = ImageTexture.create_from_image(mw_bg_img)
 		backdrop_sprite = Sprite3D.new()
 		backdrop_sprite.texture = backdrop_texture
 		backdrop_sprite.pixel_size = 1.2 
@@ -703,7 +703,7 @@ func set_galactic_view():
 			galaxy_return_marker.add_child(arr)
 			
 		# Visually pulsing the tracking matrix explicitly so it can never be mistaken for generic stars
-		create_tween().set_loops().tween_property(galaxy_return_marker, "rotation:y", PI * 2.0, 8.0).as_relative()
+		create_tween().bind_node(galaxy_return_marker).set_loops().tween_property(galaxy_return_marker, "rotation:y", PI * 2.0, 8.0).as_relative()
 		
 func set_system_view(star_index: int):
 	# Hide macro universe UI/paths, but leave background logic running natively if needed
@@ -836,9 +836,9 @@ func set_system_view(star_index: int):
 		disk_mesh.size = Vector2(disk_rad * 2.0, disk_rad * 2.0)
 		
 		var tex = null
-		var img = Image.new()
-		if img.load("res://Resources/accretion_disk.jpg") == OK:
-			tex = ImageTexture.create_from_image(img)
+		var accretion_img = Image.new()
+		if accretion_img.load("res://Resources/accretion_disk.jpg") == OK:
+			tex = ImageTexture.create_from_image(accretion_img)
 			
 		var eq_mat = ShaderMaterial.new()
 		eq_mat.shader = load("res://Shaders/black_hole_equator.gdshader")
@@ -860,7 +860,7 @@ func set_system_view(star_index: int):
 		add_child(eq_disk)
 		system_view_nodes.append(eq_disk)
 		
-		create_tween().set_loops().tween_property(eq_disk, "rotation:y", PI * 2.0, 12.0).as_relative()
+		create_tween().bind_node(eq_disk).set_loops().tween_property(eq_disk, "rotation:y", PI * 2.0, 12.0).as_relative()
 		
 		# B. The Orthogonal Gravitational Lensing Halo (3-Tiered Hierarchy fix)!
 		# Tracker Pivot physically looks_at the Camera constantly
@@ -884,7 +884,7 @@ func set_system_view(star_index: int):
 		tilt_pivot.add_child(halo_disk)
 		
 		# Natively synching the rotational period explicitly with the equatorial disk (-PI matching direction!)
-		create_tween().set_loops().tween_property(halo_disk, "rotation:y", -PI * 2.0, 12.0).as_relative()
+		create_tween().bind_node(halo_disk).set_loops().tween_property(halo_disk, "rotation:y", -PI * 2.0, 12.0).as_relative()
 		
 		black_hole_billboards.append({
 			"node": halo_tracker,
@@ -925,7 +925,7 @@ func set_system_view(star_index: int):
 		system_view_nodes.append(h_node)
 		
 		# Rotate Halo seamlessly over time
-		create_tween().set_loops().tween_property(h_node, "rotation:y", PI * 2.0, 20.0).as_relative()
+		create_tween().bind_node(h_node).set_loops().tween_property(h_node, "rotation:y", PI * 2.0, 20.0).as_relative()
 		
 	else:
 		# Universal Procedural Generation explicitly overwriting standard base Star Meshes!
@@ -1241,7 +1241,7 @@ func _on_planet_input_event(camera, event, event_position, normal, shape_idx, p_
 			arr.position = outward_dir * (p_outer_boundary + 3.0) 
 			focused_planet_marker.add_child(arr)
 			
-		create_tween().set_loops().tween_property(focused_planet_marker, "rotation:y", PI * 2.0, 8.0).as_relative()
+		create_tween().bind_node(focused_planet_marker).set_loops().tween_property(focused_planet_marker, "rotation:y", PI * 2.0, 8.0).as_relative()
 		
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		# If a fleet is locally natively selected structurally intercepting planetary right clicks explicitly!

@@ -182,7 +182,7 @@ func _set_fleet_focus_visuals(fleet: Dictionary, active: bool):
 				arr.rotation.y = atan2(-inward_dir.z, inward_dir.x)
 				arr.position = -inward_dir * 3.5 
 				marker.add_child(arr)
-			var t = create_tween().set_loops()
+			var t = create_tween().bind_node(marker).set_loops()
 			t.tween_property(marker, "rotation:y", PI * 2.0, 6.0).as_relative()
 		elif not active and marker != null:
 			marker.name = "freed" # Free up the path instantly natively preventing same-frame re-selection pointer lookup collision!
@@ -363,7 +363,7 @@ func _instantiate_fleet_geometry(fleet: Dictionary):
 	mesh_inst.material_override = mat
 	ship_node.add_child(mesh_inst)
 	
-	var t = create_tween().set_loops()
+	var t = create_tween().bind_node(ship_node).set_loops()
 	t.tween_property(mat, "albedo_color:a", 0.0, 1.5)
 	t.parallel().tween_property(mat, "emission_energy_multiplier", 0.0, 1.5)
 	t.tween_property(mat, "albedo_color:a", 1.0, 0.1)
