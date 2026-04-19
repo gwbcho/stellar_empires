@@ -1,21 +1,29 @@
 shader_type spatial;
-render_mode unshaded, blend_add, cull_disabled;
-float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-float noise(vec2 p) {
-	vec2 i = floor(p); vec2 f = fract(p); vec2 u = f*f*(3.0-2.0*f);
-	return mix(mix(hash(i + vec2(0.0,0.0)), hash(i + vec2(1.0,0.0)), u.x),
-			   mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
-}
-float fbm(vec2 p) { float f = 0.0; float w = 0.5; for (int i=0; i<3; i++) { f += w * noise(p); p *= 2.0; w *= 0.5; } return f; }
+render_mode blend_add, unshaded, cull_disabled;
+
+uniform sampler2D tex_albedo : source_color, filter_linear_mipmap_anisotropic;
+uniform float emission_energy = 4.0;
+uniform vec3 bh_pos;
 
 void fragment() {
-	vec2 center = vec2(0.5, 0.5);
-	float dist = distance(UV, center) * 2.0; 
-	float fade = 1.0 - smoothstep(0.1, 1.0, dist);
+	// Natively flip horizontal UV mapping to reverse the chiral geometry 
+	// of the plasma streaks so they perfectly trail the reversed -PI animation!
+	vec2 flipped_uv = vec2(1.0 - UV.x, UV.y);
+	vec4 c = texture(tex_albedo, flipped_uv);
+	float lum = max(max(c.r, c.g), c.b);
+	float mask = smoothstep(0.02, 0.15, lum);
 	
-	vec2 polar = vec2(atan(UV.y - 0.5, UV.x - 0.5), dist);
-	float radial_noise = fbm(vec2(polar.x * 5.0, polar.y * 10.0 - TIME * 5.0)); // Inward falling plasma
+	// Extract explicit World-Space Geometric Intersections mathematically!
+	vec3 world_pos = (INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	
-	ALBEDO = vec3(0.5, 0.1, 1.0) * fade * (1.0 + radial_noise * 2.0); // Violet halo
-	ALPHA = fade * 0.8 * clamp(radial_noise, 0.2, 1.0);
+	// Because the horizontal accretion disk geometry is structurally mapped completely 
+	// flat upon the exact absolute Y-axis plane of the singularity (world_pos.y == bh_pos.y), 
+	// any Halo fragment sharing that identical Y-coordinate is physically colliding into it!
+	float dy = abs(world_pos.y - bh_pos.y);
+	
+	// Fades out into pure native transparency exactly matching the physical equator line
+	// utterly regardless of the viewing pitch or relative rotation sequence limits on the camera lens!
+	float angle_fade = smoothstep(0.1, 1.5, dy);
+	
+	ALBEDO = c.rgb * emission_energy * mask * angle_fade;
 }
