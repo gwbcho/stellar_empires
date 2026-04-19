@@ -106,7 +106,7 @@ func _unhandled_input(event):
 				if Vector2(click_hit.x, click_hit.z).distance_to(Vector2(c_star["pos"].x, c_star["pos"].z)) <= ring_rad:
 					for f in selected_fleets:
 						f["jump_target"] = -1 # Purge queued hyper-jumps instantly logically overriding dynamically!
-						_order_fleet_move(f, click_hit)
+						order_fleet_move(f, click_hit)
 			
 	if event is InputEventMouseMotion and is_dragging:
 		drag_rect.position = Vector2(min(drag_start.x, event.position.x), min(drag_start.y, event.position.y))
@@ -185,12 +185,13 @@ func _set_fleet_focus_visuals(fleet: Dictionary, active: bool):
 			var t = create_tween().set_loops()
 			t.tween_property(marker, "rotation:y", PI * 2.0, 6.0).as_relative()
 		elif not active and marker != null:
+			marker.name = "freed" # Free up the path instantly natively preventing same-frame re-selection pointer lookup collision!
 			marker.queue_free()
 			
 		if ship.has_meta("waypoint_visuals") and is_instance_valid(ship.get_meta("waypoint_visuals")):
 			ship.get_meta("waypoint_visuals").visible = active
 
-func _order_fleet_move(fleet: Dictionary, target_pos: Vector3):
+func order_fleet_move(fleet: Dictionary, target_pos: Vector3):
 	fleet["target_pos"] = target_pos
 	fleet["move_start_pos"] = fleet["local_pos"]
 	fleet["move_start_time"] = float(Time.get_unix_time_from_system())
@@ -230,7 +231,7 @@ func _order_fleet_move(fleet: Dictionary, target_pos: Vector3):
 		ship.set_meta("waypoint_visuals", wp)
 		if not fleet["selected"]: wp.visible = false
 
-func _order_fleet_jump(fleet: Dictionary, target_sys: int):
+func order_fleet_jump(fleet: Dictionary, target_sys: int):
 	var curr_idx = fleet["system_index"]
 	var c_star = galaxy_generator.star_data[curr_idx]
 	var t_star = galaxy_generator.star_data[target_sys]
@@ -243,7 +244,7 @@ func _order_fleet_jump(fleet: Dictionary, target_sys: int):
 	var edge_pos = c_star["pos"] + (dir * ring_rad)
 	edge_pos.y = 15.0 # Conform explicitly seamlessly matching constant 15.0 planar elevations natively!
 	
-	_order_fleet_move(fleet, edge_pos) # Retrigger line graphics seamlessly overriding active routing perfectly
+	order_fleet_move(fleet, edge_pos) # Retrigger line graphics seamlessly overriding active routing perfectly
 	fleet["jump_target"] = target_sys # Map immediately after overriding locally
 
 func _execute_jump(fleet: Dictionary):
@@ -283,58 +284,42 @@ func _execute_jump(fleet: Dictionary):
 		_play_warp_flash(entry_pos)
 
 func _play_warp_flash(pos: Vector3):
-	var flash_mesh = SphereMesh.new()
-	flash_mesh.radius = 4.0
-	flash_mesh.height = 8.0
+	# Mimic explicitly the Cherenkov plasma bloom physically mirroring the Pulsar Horizon shader!
+	var flash_mesh = PlaneMesh.new()
+	flash_mesh.size = Vector2(40.0, 40.0)
 	
 	var f_mat = ShaderMaterial.new()
-	var f_shader = Shader.new()
-	f_shader.code = """
-shader_type spatial;
-render_mode unshaded, blend_add, cull_disabled;
-uniform vec3 base_color = vec3(0.2, 0.8, 1.0);
-void fragment() {
-	ALBEDO = base_color * 5.0; 
-	ALPHA = 1.0;
-}
-	"""
-	f_mat.shader = f_shader
+	f_mat.shader = load("res://Shaders/warp_flash.gdshader")
 	
 	var flash_node = MeshInstance3D.new()
 	flash_node.mesh = flash_mesh
 	flash_node.material_override = f_mat
 	flash_node.position = pos
+	
+	# Billboard dynamically exactly mimicking a perfect volumetric sphere glow regardless of camera angle
+	var mat_override_internal = StandardMaterial3D.new() # We inject billboard natively via standard geometry tracking
+	flash_node.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	add_child(flash_node)
 	
-	var t = create_tween()
-	t.tween_property(flash_node, "scale", Vector3(10.0, 0.1, 10.0), 0.1)
-	t.tween_property(flash_node, "scale", Vector3(0.0, 30.0, 0.0), 0.3)
-	t.tween_callback(flash_node.queue_free)
+	# Manually orient to face active camera properly explicitly identically
+	var cam = get_viewport().get_camera_3d()
+	if cam:
+		flash_node.look_at(cam.global_position, Vector3.UP)
+		flash_node.rotate_x(PI/2) # PlaneMesh aligns flat initially, stand it up towards the lens!
+	
+	var t = create_tween().set_parallel(true)
+	
+	flash_node.scale = Vector3(0.01, 0.01, 0.01)
+	t.tween_property(flash_node, "scale", Vector3(1.5, 1.5, 1.5), 0.15).set_ease(Tween.EASE_OUT)
+	t.tween_method(func(v): f_mat.set_shader_parameter("explosion_alpha", v), 1.0, 0.0, 0.6).set_delay(0.05)
+	
+	t.chain().tween_callback(flash_node.queue_free)
 
 var _cached_waypoint_shader: ShaderMaterial = null
 func _get_waypoint_shader() -> ShaderMaterial:
 	if _cached_waypoint_shader != null: return _cached_waypoint_shader.duplicate()
-	var shader = Shader.new()
-	shader.code = """
-shader_type spatial;
-render_mode blend_add, unshaded, cull_disabled;
-uniform vec4 color : source_color = vec4(0.2, 1.0, 0.5, 1.0);
-uniform float speed = 2.0;
-uniform float scale_y = 5.0; 
-void fragment() {
-	vec2 uv = UV;
-	uv.y *= scale_y;
-	uv.y -= TIME * speed;
-	vec2 local_uv = fract(uv);
-	float distFromCenter = abs(local_uv.x - 0.5);
-	float arrow_shape = step(distFromCenter * 2.0, local_uv.y) * step(local_uv.y, distFromCenter * 2.0 + 0.3);
-	float line_shape = step(distFromCenter, 0.05);	
-	ALPHA = color.a * max(arrow_shape, line_shape);
-	ALBEDO = color.rgb;
-}
-"""
 	var mat = ShaderMaterial.new()
-	mat.shader = shader
+	mat.shader = load("res://Shaders/fleet_waypoint.gdshader")
 	_cached_waypoint_shader = mat
 	return mat.duplicate()
 
@@ -407,11 +392,10 @@ func _instantiate_fleet_geometry(fleet: Dictionary):
 	if fleet["selected"]:
 		_set_fleet_focus_visuals(fleet, true)
 	if fleet["is_moving"]:
-		_order_fleet_move(fleet, fleet["target_pos"])
+		order_fleet_move(fleet, fleet["target_pos"])
 
 func clear_ships():
 	current_rendered_system = -1
-	selected_fleets.clear()
 	for f in global_fleets:
 		if f.has("visual_node") and is_instance_valid(f["visual_node"]):
 			var wp = f["visual_node"].get_meta("waypoint_visuals") if f["visual_node"].has_meta("waypoint_visuals") else null

@@ -49,30 +49,7 @@ var cached_ui_shader: Shader = null
 
 func get_ui_plate_material(plate_size: Vector2) -> ShaderMaterial:
 	if cached_ui_shader == null:
-		cached_ui_shader = Shader.new()
-		cached_ui_shader.code = """
-shader_type spatial;
-render_mode blend_mix, depth_draw_opaque, unshaded, cull_disabled;
-uniform vec4 border_color : source_color = vec4(0.3, 0.8, 1.0, 1.0);
-uniform vec4 bg_color : source_color = vec4(0.05, 0.05, 0.08, 0.85);
-uniform vec2 rect_size = vec2(30.0, 8.0); 
-uniform float line_thickness = 0.5;
-
-void vertex() {
-	// Native GPU Billboarding Matrix enforcing local tracking globally 
-	MODELVIEW_MATRIX = VIEW_MATRIX * mat4(INV_VIEW_MATRIX[0], INV_VIEW_MATRIX[1], INV_VIEW_MATRIX[2], MODEL_MATRIX[3]);
-	MODELVIEW_NORMAL_MATRIX = mat3(MODELVIEW_MATRIX);
-}
-
-void fragment() {
-	vec2 pixel_coord = UV * rect_size;
-	float bx = step(pixel_coord.x, line_thickness) + step(rect_size.x - line_thickness, pixel_coord.x);
-	float by = step(pixel_coord.y, line_thickness) + step(rect_size.y - line_thickness, pixel_coord.y);
-	float is_border = clamp(bx + by, 0.0, 1.0);
-	ALBEDO = mix(bg_color.rgb, border_color.rgb, is_border);
-	ALPHA = mix(bg_color.a, border_color.a, is_border);
-}
-"""
+		cached_ui_shader = load("res://Shaders/ui_plate.gdshader")
 	var mat = ShaderMaterial.new()
 	mat.shader = cached_ui_shader
 	mat.set_shader_parameter("rect_size", plate_size)
@@ -83,77 +60,7 @@ var cached_planet_shaders: Dictionary = {}
 
 func get_planet_material(p_type: String) -> ShaderMaterial:
 	if not cached_planet_shaders.has(p_type):
-		var s = Shader.new()
-		if p_type == "Rocky":
-			s.code = """
-shader_type spatial;
-render_mode blend_mix, depth_draw_opaque, cull_back;
-uniform vec3 base_color : source_color;
-uniform vec3 rock_color : source_color;
-float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-float noise(vec2 p) {
-	vec2 i = floor(p); vec2 f = fract(p); vec2 u = f*f*(3.0-2.0*f);
-	return mix(mix(hash(i + vec2(0.0,0.0)), hash(i + vec2(1.0,0.0)), u.x),
-			   mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
-}
-float fbm(vec2 p) { float f = 0.0; float w = 0.5; for (int i=0; i<5; i++) { f += w * noise(p); p *= 2.0; w *= 0.5; } return f; }
-void fragment() {
-	vec2 uv = UV * 12.0;
-	float n = fbm(uv);
-	ALBEDO = mix(base_color, rock_color, smoothstep(0.3, 0.7, n));
-	ROUGHNESS = mix(0.7, 1.0, n);
-}
-"""
-		elif p_type == "Gas":
-			s.code = """
-shader_type spatial;
-uniform vec3 band_color1 : source_color;
-uniform vec3 band_color2 : source_color;
-float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-float noise(vec2 p) {
-	vec2 i = floor(p); vec2 f = fract(p); vec2 u = f*f*(3.0-2.0*f);
-	return mix(mix(hash(i + vec2(0.0,0.0)), hash(i + vec2(1.0,0.0)), u.x),
-			   mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
-}
-float fbm(vec2 p) { float f = 0.0; float w = 0.5; for (int i=0; i<6; i++) { f += w * noise(p); p *= 2.0; w *= 0.5; } return f; }
-void fragment() {
-	vec2 uv = UV;
-	uv.x -= TIME * 0.015; // Slow atmospheric spin
-	// Stretched Y coordinates structurally enforcing fluid fluid bands across the equatorial plane!
-	float n = fbm(vec2(uv.x * 6.0, uv.y * 40.0));
-	n = smoothstep(0.4, 0.6, n);
-	ALBEDO = mix(band_color1, band_color2, n);
-	ROUGHNESS = 1.0;
-}
-"""
-		elif p_type == "Habitable":
-			s.code = """
-shader_type spatial;
-uniform vec3 water_color : source_color;
-uniform vec3 land_color : source_color;
-uniform vec3 cloud_color : source_color;
-float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-float noise(vec2 p) {
-	vec2 i = floor(p); vec2 f = fract(p); vec2 u = f*f*(3.0-2.0*f);
-	return mix(mix(hash(i + vec2(0.0,0.0)), hash(i + vec2(1.0,0.0)), u.x),
-			   mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
-}
-float fbm(vec2 p) { float f = 0.0; float w = 0.5; for (int i=0; i<5; i++) { f += w * noise(p); p *= 2.0; w *= 0.5; } return f; }
-void fragment() {
-	vec2 uv = UV * 6.0;
-	// Base continent/ocean generation
-	float elevation = fbm(uv + vec2(3.14, 0.0));
-	vec3 surface = mix(water_color, land_color, smoothstep(0.48, 0.53, elevation));
-	
-	// Separate sweeping cloud atmospheric layer natively decoupled visually!
-	vec2 cloud_uv = uv * 1.5 + vec2(TIME * 0.02, TIME * -0.01);
-	float clouds = fbm(cloud_uv); 
-	float cloud_alpha = smoothstep(0.55, 0.70, clouds);
-	
-	ALBEDO = mix(surface, cloud_color, cloud_alpha);
-	ROUGHNESS = mix(mix(0.1, 0.9, smoothstep(0.48, 0.53, elevation)), 1.0, cloud_alpha);
-}
-"""
+		var s = load("res://Shaders/planet_" + p_type.to_lower() + ".gdshader")
 		cached_planet_shaders[p_type] = s
 		
 	var m = ShaderMaterial.new()
@@ -164,35 +71,7 @@ var cached_ring_shader: Shader = null
 
 func get_ring_material(ring_color: Color, inner_rel: float) -> ShaderMaterial:
 	if not cached_ring_shader:
-		cached_ring_shader = Shader.new()
-		cached_ring_shader.code = """
-shader_type spatial;
-render_mode unshaded, blend_mix, cull_disabled, depth_draw_always;
-
-uniform vec4 ring_color : source_color;
-uniform float inner_radius_rel;
-
-float hash(float x) { return fract(sin(x * 123.456) * 789.123); }
-
-void fragment() {
-	vec2 center = UV * 2.0 - 1.0;
-	float r = length(center);
-	
-	if (r < inner_radius_rel || r > 1.0) {
-		discard;
-	}
-	
-	// Procedural banding based strictly on mathematical radius limits natively!
-	float band = hash(floor(r * 30.0)) * 0.4 + hash(floor(r * 120.0)) * 0.6;
-	
-	// Smooth edges internally avoiding antialiasing jitter natively
-	float edge_in = smoothstep(inner_radius_rel, inner_radius_rel + 0.02, r);
-	float edge_out = smoothstep(1.0, 0.98, r);
-	
-	ALBEDO = ring_color.rgb;
-	ALPHA = ring_color.a * band * edge_in * edge_out;
-}
-"""
+		cached_ring_shader = load("res://Shaders/planet_ring.gdshader")
 	var m = ShaderMaterial.new()
 	m.shader = cached_ring_shader
 	m.set_shader_parameter("ring_color", ring_color)
@@ -247,7 +126,10 @@ func _ready():
 	panel.add_child(label)
 	
 	var btn = Button.new()
-	btn.text = "🌌" 
+	var bg_img = Image.new()
+	if bg_img.load("res://Resources/milky_way_backdrop.png") == OK:
+		btn.icon = ImageTexture.create_from_image(bg_img)
+	btn.expand_icon = true
 	btn.custom_minimum_size = Vector2(75, 75)
 	var btn_style = StyleBoxFlat.new()
 	btn_style.bg_color = Color(0.05, 0.05, 0.08, 0.85)
@@ -260,7 +142,7 @@ func _ready():
 	btn.add_theme_stylebox_override("normal", btn_style)
 	btn.add_theme_stylebox_override("hover", btn_style)
 	btn.add_theme_stylebox_override("pressed", btn_style)
-	btn.add_theme_font_size_override("font_size", 42)
+	btn.add_theme_stylebox_override("pressed", btn_style)
 	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	btn.pressed.connect(func():
 		# Destroy old map button organically and execute native transition logic!
@@ -513,7 +395,9 @@ func get_system_planets(star_idx: int) -> Array:
 			"White Dwarf": core_visual_radius = 1.0
 			"Blue Giant (O/B)": core_visual_radius = 25.0
 			"Red Giant": core_visual_radius = 45.0
-		orbit_start = max(core_visual_radius + 20.0, center_star["mass"] * 18.0 + 10.0)
+		
+		# Heavily explode inner bounds outward natively tracking scaling mathematically pushing planets deep!
+		orbit_start = max(core_visual_radius * 3.0 + 45.0, center_star["mass"] * 40.0 + 45.0)
 		
 	var scale_factor = sqrt(center_star["mass"]) * 275.0
 	var ring_radius = max(275.0, scale_factor)
@@ -957,60 +841,10 @@ func set_system_view(star_index: int):
 			tex = ImageTexture.create_from_image(img)
 			
 		var eq_mat = ShaderMaterial.new()
-		var eq_shader = Shader.new()
-		eq_shader.code = """
-shader_type spatial;
-render_mode blend_add, unshaded, cull_disabled;
-
-uniform sampler2D tex_albedo : source_color, filter_linear_mipmap_anisotropic;
-uniform float emission_energy = 4.0;
-
-void fragment() {
-	vec4 c = texture(tex_albedo, UV);
-	float lum = max(max(c.r, c.g), c.b);
-	float mask = smoothstep(0.02, 0.15, lum);
-	
-	// Math completely forces pseudo-black texture bounding box to true zero!
-	// Additive rendering flawlessly merges light with no occlusion lines!
-	ALBEDO = c.rgb * emission_energy * mask;
-}
-"""
-		eq_mat.shader = eq_shader
+		eq_mat.shader = load("res://Shaders/black_hole_equator.gdshader")
 		
 		var halo_mat = ShaderMaterial.new()
-		var halo_shader = Shader.new()
-		halo_shader.code = """
-shader_type spatial;
-render_mode blend_add, unshaded, cull_disabled;
-
-uniform sampler2D tex_albedo : source_color, filter_linear_mipmap_anisotropic;
-uniform float emission_energy = 4.0;
-uniform vec3 bh_pos;
-
-void fragment() {
-	// Natively flip horizontal UV mapping to reverse the chiral geometry 
-	// of the plasma streaks so they perfectly trail the reversed -PI animation!
-	vec2 flipped_uv = vec2(1.0 - UV.x, UV.y);
-	vec4 c = texture(tex_albedo, flipped_uv);
-	float lum = max(max(c.r, c.g), c.b);
-	float mask = smoothstep(0.02, 0.15, lum);
-	
-	// Extract explicit World-Space Geometric Intersections mathematically!
-	vec3 world_pos = (INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).xyz;
-	
-	// Because the horizontal accretion disk geometry is structurally mapped completely 
-	// flat upon the exact absolute Y-axis plane of the singularity (world_pos.y == bh_pos.y), 
-	// any Halo fragment sharing that identical Y-coordinate is physically colliding into it!
-	float dy = abs(world_pos.y - bh_pos.y);
-	
-	// Fades out into pure native transparency exactly matching the physical equator line
-	// utterly regardless of the viewing pitch or relative rotation sequence limits on the camera lens!
-	float angle_fade = smoothstep(0.1, 1.5, dy);
-	
-	ALBEDO = c.rgb * emission_energy * mask * angle_fade;
-}
-"""
-		halo_mat.shader = halo_shader
+		halo_mat.shader = load("res://Shaders/black_hole_halo.gdshader")
 		
 		if tex:
 			eq_mat.set_shader_parameter("tex_albedo", tex)
@@ -1067,39 +901,7 @@ void fragment() {
 		core_mesh.height = ns_rad * 2.0
 		
 		var core_mat = ShaderMaterial.new()
-		var core_shader = Shader.new()
-		core_shader.code = """
-shader_type spatial;
-render_mode unshaded, blend_add, cull_disabled;
-
-float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-float noise(vec2 p) {
-	vec2 i = floor(p); vec2 f = fract(p);
-	vec2 u = f*f*(3.0-2.0*f);
-	return mix(mix(hash(i + vec2(0.0,0.0)), hash(i + vec2(1.0,0.0)), u.x),
-			   mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
-}
-float fbm(vec2 p) {
-	float f = 0.0; float w = 0.5;
-	for (int i=0; i<4; i++) { f += w * noise(p); p *= 2.0; w *= 0.5; }
-	return f;
-}
-
-void fragment() {
-	vec2 uv = UV * 15.0;
-	// Boiling time vector for extremely volatile energetic plasma crust
-	float n = fbm(uv + vec2(TIME * 3.0, TIME * 2.5));
-	// Crackling contrast
-	n = smoothstep(0.4, 0.8, n);
-	
-	vec3 base_col = vec3(0.1, 0.6, 1.0);
-	vec3 crackle_col = vec3(1.0, 1.0, 1.0);
-	
-	// Natively over-emit the core logic directly!
-	ALBEDO = mix(base_col, crackle_col, n) * 4.0; 
-}
-"""
-		core_mat.shader = core_shader
+		core_mat.shader = load("res://Shaders/neutron_star_core.gdshader")
 		var core_node = MeshInstance3D.new()
 		core_node.mesh = core_mesh
 		core_node.material_override = core_mat
@@ -1114,20 +916,7 @@ void fragment() {
 		halo_mesh.size = Vector2(ns_rad * 30.0, ns_rad * 30.0)
 		
 		var h_mat = ShaderMaterial.new()
-		var h_shader = Shader.new()
-		h_shader.code = """
-shader_type spatial;
-render_mode unshaded, blend_add, cull_disabled;
-void fragment() {
-	vec2 center = vec2(0.5, 0.5);
-	float dist = distance(UV, center) * 2.0; 
-	float fade = 1.0 - smoothstep(0.1, 1.0, dist);
-	
-	ALBEDO = vec3(0.2, 0.5, 1.0) * fade * 1.5; 
-	ALPHA = fade * 0.4;
-}
-"""
-		h_mat.shader = h_shader
+		h_mat.shader = load("res://Shaders/pulsar_halo.gdshader")
 		var h_node = MeshInstance3D.new()
 		h_node.mesh = halo_mesh
 		h_node.material_override = h_mat
@@ -1155,40 +944,7 @@ void fragment() {
 		u_mesh.height = u_rad * 2.0
 		
 		var u_mat = ShaderMaterial.new()
-		var u_shader = Shader.new()
-		u_shader.code = """
-shader_type spatial;
-render_mode unshaded, blend_add, cull_disabled;
-
-float hash(vec2 p) { return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
-float noise(vec2 p) {
-	vec2 i = floor(p); vec2 f = fract(p);
-	vec2 u = f*f*(3.0-2.0*f);
-	return mix(mix(hash(i + vec2(0.0,0.0)), hash(i + vec2(1.0,0.0)), u.x),
-			   mix(hash(i + vec2(0.0,1.0)), hash(i + vec2(1.0,1.0)), u.x), u.y);
-}
-float fbm(vec2 p) {
-	float f = 0.0; float w = 0.5;
-	for (int i=0; i<4; i++) { f += w * noise(p); p *= 2.0; w *= 0.5; }
-	return f;
-}
-
-uniform vec3 base_color;
-
-void fragment() {
-	vec2 uv = UV * 12.0;
-	// Boiling time vector for natively animated solar flares and plasma crust
-	float n = fbm(uv + vec2(TIME * 1.5, TIME * 1.0));
-	
-	// Fluid, natural solar surface rolling
-	n = smoothstep(0.3, 0.7, n);
-	
-	// Natively over-emit utilizing the strictly injected base_color directly!
-	// This forces the crackling energy to structurally remain the exact same hue rather than washing into generic white limits
-	ALBEDO = base_color * mix(1.0, 5.0, n); 
-}
-"""
-		u_mat.shader = u_shader
+		u_mat.shader = load("res://Shaders/universal_star.gdshader")
 		u_mat.set_shader_parameter("base_color", center_star["color"])
 		
 		var u_node = MeshInstance3D.new()
@@ -1419,7 +1175,7 @@ func _on_arrow_input_event(camera, event, event_position, normal, shape_idx, tar
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		if is_instance_valid(fleet_manager) and fleet_manager.selected_fleets.size() > 0:
 			for f in fleet_manager.selected_fleets:
-				fleet_manager._order_fleet_jump(f, target_star_index)
+				fleet_manager.order_fleet_jump(f, target_star_index)
 			get_viewport().set_input_as_handled()
 
 # --- Signals ---
@@ -1492,7 +1248,7 @@ func _on_planet_input_event(camera, event, event_position, normal, shape_idx, p_
 		if is_instance_valid(fleet_manager) and fleet_manager.selected_fleets.size() > 0:
 			var dest = Vector3(p_node.global_position.x, 15.0, p_node.global_position.z)
 			for f in fleet_manager.selected_fleets:
-				fleet_manager._order_fleet_move(f, dest)
+				fleet_manager.order_fleet_move(f, dest)
 			get_viewport().set_input_as_handled()
 
 var last_clicked_star: int = -1
