@@ -170,44 +170,56 @@ func _process(_delta):
 	# Sync Galaxy Map Fleet Indicators Dynamically exactly explicitly tracking logical arrays universally!
 	if is_instance_valid(fleet_manager):
 		for i in range(star_data.size()):
-			if star_data[i].has("fleet_icon") and star_data[i].has("constructor_icon"):
+			if star_data[i].has("fleet_icon") and star_data[i].has("constructor_icon") and star_data[i].has("colonizer_icon"):
 				var m_icon = star_data[i]["fleet_icon"]
 				var c_icon = star_data[i]["constructor_icon"]
+				var col_icon = star_data[i]["colonizer_icon"]
 				
-				if is_instance_valid(m_icon) and is_instance_valid(c_icon):
+				if is_instance_valid(m_icon) and is_instance_valid(c_icon) and is_instance_valid(col_icon):
 					var has_military = false
 					var has_constructor = false
+					var has_colonizer = false
 					var is_m_moving = false
 					var is_c_moving = false
+					var is_col_moving = false
 					
 					for f in fleet_manager.global_fleets:
 						if f["system_index"] == i:
-							if f.has("fleet_class") and f["fleet_class"] == "construction":
-								has_constructor = true
-								if f["is_moving"]: is_c_moving = true
+							if f.has("fleet_class"):
+								if f["fleet_class"] == "construction":
+									has_constructor = true
+									if f["is_moving"]: is_c_moving = true
+								elif f["fleet_class"] == "colonizer":
+									has_colonizer = true
+									if f["is_moving"]: is_col_moving = true
+								else:
+									has_military = true
+									if f["is_moving"]: is_m_moving = true
 							else:
 								has_military = true
 								if f["is_moving"]: is_m_moving = true
 								
 					var show_m = has_military
 					var show_c = has_constructor
+					var show_col = has_colonizer
 					
 					if i == fleet_manager.current_rendered_system:
 						show_m = false
 						show_c = false
+						show_col = false
 						
 					m_icon.visible = show_m
 					c_icon.visible = show_c
+					col_icon.visible = show_col
 					
-					if is_m_moving:
-						m_icon.rotation.z = -PI/2
-					else:
-						m_icon.rotation.z = 0
+					if is_m_moving: m_icon.rotation.z = -PI/2
+					else: m_icon.rotation.z = 0
 						
-					if is_c_moving:
-						c_icon.rotation.z = -PI/2
-					else:
-						c_icon.rotation.z = 0
+					if is_c_moving: c_icon.rotation.z = -PI/2
+					else: c_icon.rotation.z = 0
+						
+					if is_col_moving: col_icon.rotation.z = -PI/2
+					else: col_icon.rotation.z = 0
 
 # --- Procedural Data Generation ---
 
@@ -622,7 +634,7 @@ func visualize_galaxy():
 		ui_nodes.append(ship_sprite)
 		star["fleet_icon"] = ship_sprite
 		
-		# Constructor Fleet (Slightly further Right of Military Fleet)
+		# Constructor Fleet (Right of Star)
 		var const_sprite = Sprite3D.new()
 		var const_img = Image.new()
 		if const_img.load("res://Resources/constructor_icon.png") == OK:
@@ -640,6 +652,26 @@ func visualize_galaxy():
 		area.add_child(const_sprite)
 		ui_nodes.append(const_sprite)
 		star["constructor_icon"] = const_sprite
+		
+		# Colonizer Fleet (Right of Star)
+		var col_sprite = Sprite3D.new()
+		var col_img = Image.new()
+		if col_img.load("res://Resources/colonizer_icon.png") == OK:
+			col_sprite.texture = ImageTexture.create_from_image(col_img)
+			
+		# Render in exact same spot as the others natively (the active one becomes visible)
+		col_sprite.position = Vector3(r_offset_x, 0.0, 0.0)
+		col_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		col_sprite.visibility_range_end = 250.0 
+		col_sprite.visibility_range_end_margin = 10.0
+		col_sprite.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+		col_sprite.extra_cull_margin = 16000.0
+		col_sprite.pixel_size = 0.003 
+		col_sprite.visible = false 
+		
+		area.add_child(col_sprite)
+		ui_nodes.append(col_sprite)
+		star["colonizer_icon"] = col_sprite
 		
 		star["ui_plate_nodes"] = ui_nodes
 		
@@ -714,9 +746,11 @@ func set_galactic_view():
 		ring_m.outer_radius = 7.0
 		ring.mesh = ring_m
 		var ring_mat = StandardMaterial3D.new()
-		ring_mat.albedo_color = Color(0.2, 1.0, 0.5)
+		ring_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		ring_mat.albedo_color = Color(0.2, 1.0, 0.5, 0.45)
 		ring_mat.emission_enabled = true
 		ring_mat.emission = Color(0.2, 1.0, 0.5)
+		ring_mat.emission_energy_multiplier = 0.45
 		ring.material_override = ring_mat
 		galaxy_return_marker.add_child(ring)
 		
@@ -730,7 +764,7 @@ func set_galactic_view():
 			# Re-using literal Arrow geometry mapped inversely toward the center pivot radially
 			arr.text = "➤"
 			arr.font_size = 1000
-			arr.modulate = Color(0.2, 1.0, 0.5)
+			arr.modulate = Color(0.2, 1.0, 0.5, 0.45)
 			arr.billboard = BaseMaterial3D.BILLBOARD_DISABLED
 			arr.rotation.x = -PI/2
 			arr.rotation.y = atan2(-inward_dir.z, inward_dir.x)
@@ -1180,7 +1214,8 @@ func set_system_view(star_index: int):
 		
 		var arrow = Label3D.new()
 		arrow.text = "➤"
-		arrow.font_size = int(600 * ui_scale)
+		arrow.font_size = 600
+		arrow.scale = Vector3(ui_scale, ui_scale, ui_scale)
 		arrow.modulate = Color(0.2, 0.8, 1.0)
 		arrow.billboard = BaseMaterial3D.BILLBOARD_DISABLED 
 		arrow.rotation.x = -PI/2 # Lay flat
@@ -1189,7 +1224,8 @@ func set_system_view(star_index: int):
 		
 		var sys_label = Label3D.new()
 		sys_label.text = neighbor["name"]
-		sys_label.font_size = int(250 * ui_scale)
+		sys_label.font_size = 250
+		sys_label.scale = Vector3(ui_scale, ui_scale, ui_scale)
 		sys_label.modulate = Color(1,1,1)
 		sys_label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		sys_label.position = Vector3(0, 8.0 * ui_scale, 0)
