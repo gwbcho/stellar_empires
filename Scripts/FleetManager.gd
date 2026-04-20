@@ -11,6 +11,7 @@ var selection_box: Control
 var global_fleets: Array[Dictionary] = []
 var selected_fleets: Array[Dictionary] = []
 var current_rendered_system: int = -1
+var player_faction: String = "humans"
 
 @onready var camera: Camera3D = get_viewport().get_camera_3d()
 @onready var galaxy_generator = get_parent()
@@ -325,6 +326,13 @@ func _get_waypoint_shader() -> ShaderMaterial:
 
 # --- Orchestration Methods ---
 func create_fleet(sys_index: int, start_local_pos: Vector3, fleet_class: String = "military"):
+	var class_count = 0
+	for f in global_fleets:
+		if f.has("fleet_class") and f["fleet_class"] == fleet_class:
+			class_count += 1
+			
+	var fleet_name = fleet_class.capitalize() + " Fleet " + str(class_count + 1)
+	
 	var data = {
 		"system_index": sys_index,
 		"local_pos": Vector3(start_local_pos.x, 15.0, start_local_pos.z),
@@ -332,7 +340,9 @@ func create_fleet(sys_index: int, start_local_pos: Vector3, fleet_class: String 
 		"is_moving": false,
 		"speed": 18.0,
 		"selected": false,
-		"fleet_class": fleet_class
+		"fleet_class": fleet_class,
+		"faction": "humans",
+		"name": fleet_name
 	}
 	global_fleets.append(data)
 

@@ -4,6 +4,10 @@ class_name UIManager
 @onready var tooltip_label: Label = $TooltipLabel
 var following_mouse: bool = false
 
+var fleet_list_panel: PanelContainer
+var fleet_list_container: VBoxContainer
+var currently_displayed_category: String = ""
+
 var player_resources: Dictionary = {
 	"energy": 1500, "minerals": 500, "goods": 200, 
 	"alloys": 150, "exotic": 0, "control": 50, "research": 100
@@ -71,9 +75,9 @@ func build_top_bar():
 		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		
-		var cur_img = Image.new()
-		if cur_img.load("res://Resources/icon_" + key + ".png") == OK:
-			icon_rect.texture = ImageTexture.create_from_image(cur_img)
+		var tex = load("res://Resources/icon_" + key + ".png")
+		if tex:
+			icon_rect.texture = tex
 		else:
 			var ph = PlaceholderTexture2D.new()
 			ph.size = Vector2(28, 28)
@@ -116,6 +120,48 @@ func build_bottom_left_menu():
 	hbox.add_theme_constant_override("separation", 15)
 	margin.add_child(hbox)
 	
+	# Explicit Tracking Modal natively wrapped accurately!
+	var modal_margin = MarginContainer.new()
+	modal_margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	modal_margin.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	modal_margin.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	modal_margin.grow_horizontal = Control.GROW_DIRECTION_END
+	modal_margin.add_theme_constant_override("margin_bottom", 100) # Hugs directly over the icons mathematically
+	modal_margin.add_theme_constant_override("margin_left", 20)
+	add_child(modal_margin)
+	
+	fleet_list_panel = PanelContainer.new()
+	var panel_style = StyleBoxFlat.new()
+	panel_style.bg_color = Color(0.05, 0.08, 0.12, 0.95)
+	panel_style.border_color = Color(0.2, 0.4, 0.6, 0.8)
+	panel_style.set_border_width_all(2)
+	panel_style.corner_radius_top_left = 8
+	panel_style.corner_radius_top_right = 8
+	panel_style.corner_radius_bottom_left = 8
+	panel_style.corner_radius_bottom_right = 8
+	fleet_list_panel.add_theme_stylebox_override("panel", panel_style)
+	fleet_list_panel.custom_minimum_size = Vector2(320, 250)
+	fleet_list_panel.hide()
+	modal_margin.add_child(fleet_list_panel)
+	
+	var scroll = ScrollContainer.new()
+	scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	fleet_list_panel.add_child(scroll)
+	
+	fleet_list_container = VBoxContainer.new()
+	fleet_list_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	fleet_list_container.add_theme_constant_override("separation", 10)
+	
+	var list_margin = MarginContainer.new()
+	list_margin.add_theme_constant_override("margin_left", 15)
+	list_margin.add_theme_constant_override("margin_right", 15)
+	list_margin.add_theme_constant_override("margin_top", 15)
+	list_margin.add_theme_constant_override("margin_bottom", 15)
+	list_margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	list_margin.add_child(fleet_list_container)
+	scroll.add_child(list_margin)
+	
 	# Dynamically iterate and inject exact decoupled asset filenames mapped into clean interactive UI nodes!
 	var unit_classes = ["colony", "construction", "science", "military"]
 	for c in unit_classes:
@@ -147,7 +193,92 @@ func build_bottom_left_menu():
 			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 			
 		btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		btn.pressed.connect(_on_fleet_category_pressed.bind(c))
 		hbox.add_child(btn)
+
+func _on_fleet_category_pressed(category: String):
+	if currently_displayed_category == category and fleet_list_panel.visible:
+		fleet_list_panel.hide()
+		currently_displayed_category = ""
+		return
+		
+	currently_displayed_category = category
+	fleet_list_panel.show()
+	
+	for child in fleet_list_container.get_children():
+		child.queue_free()
+		
+	var title = Label.new()
+	title.text = category.capitalize() + " Fleets"
+	title.add_theme_color_override("font_color", Color(0.2, 1.0, 0.5, 1.0))
+	title.add_theme_font_size_override("font_size", 20)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	fleet_list_container.add_child(title)
+	
+	var hs = HSeparator.new()
+	fleet_list_container.add_child(hs)
+	
+	var fm = get_parent().get_node_or_null("GalaxyGenerator/FleetManager")
+	var gal = get_parent().get_node_or_null("GalaxyGenerator")
+	if not fm or not gal: return
+	
+	var found = false
+	for f in fm.global_fleets:
+		# Safety check structurally for newly injected faction keys globally mapped securely!
+		if f.has("fleet_class") and f.has("faction") and f.has("name"):
+			if f["fleet_class"] == category and f["faction"] == fm.player_faction:
+				found = true
+				var item_box = VBoxContainer.new()
+				
+				var name_lbl = Button.new()
+				name_lbl.text = f["name"]
+				name_lbl.flat = true
+				name_lbl.alignment = HORIZONTAL_ALIGNMENT_LEFT
+				name_lbl.add_theme_font_size_override("font_size", 16)
+				name_lbl.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+				name_lbl.add_theme_color_override("font_hover_color", Color(0.2, 1.0, 0.5, 1.0))
+				name_lbl.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+				
+				# Explicitly parse the live memory dict natively rather than baking stale immutable indices locally!
+				if f.has("system_index"):
+					name_lbl.pressed.connect(_on_fleet_name_pressed.bind(f))
+					
+				item_box.add_child(name_lbl)
+				
+				var loc_lbl = Label.new()
+				var loc_name = "Deep Space"
+				if f.has("system_index") and f["system_index"] != -1 and f["system_index"] < gal.star_data.size():
+					loc_name = gal.star_data[f["system_index"]]["name"] + " System"
+				loc_lbl.text = "Deployed: " + loc_name
+				loc_lbl.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
+				loc_lbl.add_theme_font_size_override("font_size", 14)
+				loc_lbl.set_meta("fleet_ref", f) # Hard-ties the memory reference to the UI!
+				item_box.add_child(loc_lbl)
+				
+				fleet_list_container.add_child(item_box)
+				
+				var small_hs = HSeparator.new()
+				fleet_list_container.add_child(small_hs)
+				
+	if not found:
+		var empty = Label.new()
+		empty.text = "No active fleets."
+		empty.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5))
+		fleet_list_container.add_child(empty)
+
+func _on_fleet_name_pressed(f: Dictionary):
+	if not f.has("system_index") or f["system_index"] == -1: return
+	var idx = f["system_index"]
+	
+	var gal = get_parent().get_node_or_null("GalaxyGenerator")
+	if not gal or idx < 0 or idx >= gal.star_data.size(): return
+	
+	var cam = get_viewport().get_camera_3d()
+	if cam and cam.has_method("focus_on_star"):
+		# Natively mimic exactly the physical MainCamera collision transition physics directly from the UI state organically!
+		var ring_radius = max(275.0, sqrt(gal.star_data[idx]["mass"]) * 275.0)
+		cam.focus_on_star(gal.star_data[idx]["pos"], true, ring_radius)
+		gal.set_system_view(idx)
 
 func update_top_bar():
 	for key in resource_keys:
@@ -170,6 +301,23 @@ func _process(_delta):
 	if following_mouse:
 		# Attach the tooltip directly to the cursor with an offset
 		tooltip_label.position = tooltip_label.get_global_mouse_position() + Vector2(15, -25)
+		
+	# Native tracking loop to synchronize physically moving fleet map states identically!
+	if fleet_list_panel.visible and currently_displayed_category != "":
+		var gal = get_parent().get_node_or_null("GalaxyGenerator")
+		if gal:
+			for item_box in fleet_list_container.get_children():
+				if item_box is VBoxContainer and item_box.get_child_count() > 1:
+					var loc_lbl = item_box.get_child(1)
+					if loc_lbl.has_meta("fleet_ref"):
+						var f = loc_lbl.get_meta("fleet_ref")
+						var loc_name = "Deep Space"
+						if f.has("system_index") and f["system_index"] != -1 and f["system_index"] < gal.star_data.size():
+							loc_name = gal.star_data[f["system_index"]]["name"] + " System"
+						
+						var exact_text = "Deployed: " + loc_name
+						if loc_lbl.text != exact_text:
+							loc_lbl.text = exact_text
 
 func show_tooltip(text: String):
 	tooltip_label.text = text
