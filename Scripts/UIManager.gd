@@ -28,6 +28,7 @@ var top_bar_labels = {}
 func _ready():
 	tooltip_label.hide()
 	build_top_bar()
+	build_bottom_left_menu()
 
 func build_top_bar():
 	var top_bar_margin = MarginContainer.new()
@@ -101,6 +102,52 @@ func build_top_bar():
 			
 		res_hbox.add_child(inc_label)
 		top_bar_labels[key] = {"val": val_label, "inc": inc_label}
+
+func build_bottom_left_menu():
+	var margin = MarginContainer.new()
+	margin.add_theme_constant_override("margin_bottom", 20)
+	margin.add_theme_constant_override("margin_left", 20)
+	margin.set_anchors_preset(Control.PRESET_BOTTOM_LEFT)
+	margin.grow_horizontal = Control.GROW_DIRECTION_END
+	margin.grow_vertical = Control.GROW_DIRECTION_BEGIN
+	add_child(margin)
+	
+	var hbox = HBoxContainer.new()
+	hbox.add_theme_constant_override("separation", 15)
+	margin.add_child(hbox)
+	
+	# Dynamically iterate and inject exact decoupled asset filenames mapped into clean interactive UI nodes!
+	var unit_classes = ["colony", "construction", "science", "military"]
+	for c in unit_classes:
+		var btn = Button.new()
+		btn.custom_minimum_size = Vector2(64, 64)
+		
+		var style = StyleBoxFlat.new()
+		style.bg_color = Color(0.05, 0.08, 0.12, 0.85)
+		style.border_color = Color(0.2, 0.4, 0.6, 0.6)
+		style.set_border_width_all(2)
+		style.corner_radius_bottom_left = 6
+		style.corner_radius_bottom_right = 6
+		style.corner_radius_top_left = 6
+		style.corner_radius_top_right = 6
+		
+		var hover_style = style.duplicate()
+		hover_style.border_color = Color(0.2, 1.0, 0.5, 0.9)
+		hover_style.bg_color = Color(0.1, 0.15, 0.2, 0.9)
+		
+		btn.add_theme_stylebox_override("normal", style)
+		btn.add_theme_stylebox_override("hover", hover_style)
+		btn.add_theme_stylebox_override("pressed", hover_style)
+		
+		var tex = load("res://Resources/icon_" + c + "_units.png")
+		if tex:
+			btn.icon = tex
+			btn.expand_icon = true
+			# Ensures icons flawlessly map inside the box symmetrically 
+			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			
+		btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		hbox.add_child(btn)
 
 func update_top_bar():
 	for key in resource_keys:

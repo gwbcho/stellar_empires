@@ -103,8 +103,8 @@ func _ready():
 	
 	var panel = PanelContainer.new()
 	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.05, 0.05, 0.08, 0.85)
-	style.border_color = Color(0.2, 1.0, 0.5, 0.9) 
+	style.bg_color = Color(0.05, 0.08, 0.12, 0.85)
+	style.border_color = Color(0.2, 0.4, 0.6, 0.6)
 	style.set_border_width_all(3)
 	style.content_margin_left = 35
 	style.content_margin_right = 35
@@ -132,17 +132,21 @@ func _ready():
 	btn.expand_icon = true
 	btn.custom_minimum_size = Vector2(75, 75)
 	var btn_style = StyleBoxFlat.new()
-	btn_style.bg_color = Color(0.05, 0.05, 0.08, 0.85)
-	btn_style.border_color = Color(0.2, 1.0, 0.5, 0.9) # Identical neon matrix linking the UI organically
+	btn_style.bg_color = Color(0.05, 0.08, 0.12, 0.85)
+	btn_style.border_color = Color(0.2, 0.4, 0.6, 0.6)
 	btn_style.set_border_width_all(3)
 	btn_style.corner_radius_top_left = 8
 	btn_style.corner_radius_top_right = 8
 	btn_style.corner_radius_bottom_left = 8
 	btn_style.corner_radius_bottom_right = 8
+	
+	var btn_hover_style = btn_style.duplicate()
+	btn_hover_style.border_color = Color(0.2, 1.0, 0.5, 0.9)
+	btn_hover_style.bg_color = Color(0.1, 0.15, 0.2, 0.9)
+	
 	btn.add_theme_stylebox_override("normal", btn_style)
-	btn.add_theme_stylebox_override("hover", btn_style)
-	btn.add_theme_stylebox_override("pressed", btn_style)
-	btn.add_theme_stylebox_override("pressed", btn_style)
+	btn.add_theme_stylebox_override("hover", btn_hover_style)
+	btn.add_theme_stylebox_override("pressed", btn_hover_style)
 	btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 	btn.pressed.connect(func():
 		# Destroy old map button organically and execute native transition logic!
