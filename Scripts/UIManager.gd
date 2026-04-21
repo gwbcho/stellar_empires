@@ -228,32 +228,50 @@ func _on_fleet_category_pressed(category: String):
 		if f.has("fleet_class") and f.has("faction") and f.has("name"):
 			if f["fleet_class"] == category and f["faction"] == fm.player_faction:
 				found = true
-				var item_box = VBoxContainer.new()
+				found = true
+				var item_box = PanelContainer.new()
+				
+				# Setup clean baseline styling natively
+				var sb = StyleBoxFlat.new()
+				sb.bg_color = Color(0,0,0,0) # Invisible initially dynamically!
+				item_box.add_theme_stylebox_override("panel", sb)
+				item_box.set_meta("base_style", sb)
+				
+				var vbox = VBoxContainer.new()
+				item_box.add_child(vbox)
 				
 				var name_lbl = Button.new()
 				name_lbl.text = f["name"]
 				name_lbl.flat = true
 				name_lbl.alignment = HORIZONTAL_ALIGNMENT_LEFT
+				
+				var sb_empty = StyleBoxEmpty.new()
+				name_lbl.add_theme_stylebox_override("normal", sb_empty)
+				name_lbl.add_theme_stylebox_override("hover", sb_empty)
+				name_lbl.add_theme_stylebox_override("pressed", sb_empty)
+				name_lbl.add_theme_stylebox_override("focus", sb_empty)
+				
 				name_lbl.add_theme_font_size_override("font_size", 16)
 				name_lbl.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 				name_lbl.add_theme_color_override("font_hover_color", Color(0.2, 1.0, 0.5, 1.0))
 				name_lbl.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 				
-				# Explicitly parse the live memory dict natively rather than baking stale immutable indices locally!
-				if f.has("system_index"):
-					name_lbl.pressed.connect(_on_fleet_name_pressed.bind(f))
+				# Explicitly securely capture local primitive arrays intrinsically overriding engine scopes!
+				name_lbl.pressed.connect(_on_fleet_name_pressed.bind(f))
 					
-				item_box.add_child(name_lbl)
+				vbox.add_child(name_lbl)
 				
 				var loc_lbl = Label.new()
 				var loc_name = "Deep Space"
 				if f.has("system_index") and f["system_index"] != -1 and f["system_index"] < gal.star_data.size():
-					loc_name = gal.star_data[f["system_index"]]["name"] + " System"
-				loc_lbl.text = "Deployed: " + loc_name
+					loc_name = gal.star_data[f["system_index"]]["name"]
+				if f.has("is_jumping") and f["is_jumping"] and f.has("target_system"):
+					loc_name = "Transit (Moving to " + gal.star_data[f["target_system"]]["name"] + ")"
+				loc_lbl.text = loc_name
 				loc_lbl.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
 				loc_lbl.add_theme_font_size_override("font_size", 14)
-				loc_lbl.set_meta("fleet_ref", f) # Hard-ties the memory reference to the UI!
-				item_box.add_child(loc_lbl)
+				loc_lbl.set_meta("fleet_ref", f) # Hard-ties the memory reference to the UI physically!
+				vbox.add_child(loc_lbl)
 				
 				fleet_list_container.add_child(item_box)
 				
@@ -267,6 +285,11 @@ func _on_fleet_category_pressed(category: String):
 		fleet_list_container.add_child(empty)
 
 func _on_fleet_name_pressed(f: Dictionary):
+	var fm = get_parent().get_node_or_null("GalaxyGenerator/FleetManager")
+	if fm and fm.has_method("set_selection"):
+		fm.set_selection([f])
+		
+	# If deeply transiting currently natively, skip strict camera zoom explicitly!
 	if not f.has("system_index") or f["system_index"] == -1: return
 	var idx = f["system_index"]
 	
@@ -307,17 +330,34 @@ func _process(_delta):
 		var gal = get_parent().get_node_or_null("GalaxyGenerator")
 		if gal:
 			for item_box in fleet_list_container.get_children():
-				if item_box is VBoxContainer and item_box.get_child_count() > 1:
-					var loc_lbl = item_box.get_child(1)
-					if loc_lbl.has_meta("fleet_ref"):
-						var f = loc_lbl.get_meta("fleet_ref")
-						var loc_name = "Deep Space"
-						if f.has("system_index") and f["system_index"] != -1 and f["system_index"] < gal.star_data.size():
-							loc_name = gal.star_data[f["system_index"]]["name"] + " System"
-						
-						var exact_text = "Deployed: " + loc_name
-						if loc_lbl.text != exact_text:
-							loc_lbl.text = exact_text
+				if item_box is PanelContainer and item_box.get_child_count() > 0:
+					var vbox = item_box.get_child(0)
+					if vbox is VBoxContainer and vbox.get_child_count() > 1:
+						var loc_lbl = vbox.get_child(1)
+						if loc_lbl.has_meta("fleet_ref"):
+							var f = loc_lbl.get_meta("fleet_ref")
+							var loc_name = "Deep Space"
+							if f.has("system_index") and f["system_index"] != -1 and f["system_index"] < gal.star_data.size():
+								loc_name = gal.star_data[f["system_index"]]["name"]
+								if f.has("target_system") and f["target_system"] != -1:
+									loc_name += " (navigating to " + gal.star_data[f["target_system"]]["name"] + ")"
+							elif f.has("is_jumping") and f["is_jumping"] and f.has("target_system"):
+								loc_name = "Transit (Moving to " + gal.star_data[f["target_system"]]["name"] + ")"
+							
+							var exact_text = loc_name
+							if loc_lbl.text != exact_text:
+								loc_lbl.text = exact_text
+								
+							# Native style rendering checking physical selected memory natively!
+							var is_sel = f.has("selected") and f["selected"]
+							var active_sel = item_box.get_meta("is_selected", false)
+							if is_sel != active_sel:
+								item_box.set_meta("is_selected", is_sel)
+								var name_lbl = vbox.get_child(0)
+								if is_sel:
+									if name_lbl is Button: name_lbl.add_theme_color_override("font_color", Color(0.2, 1.0, 0.5, 1.0))
+								else:
+									if name_lbl is Button: name_lbl.add_theme_color_override("font_color", Color(1, 1, 1, 1))
 
 func show_tooltip(text: String):
 	tooltip_label.text = text

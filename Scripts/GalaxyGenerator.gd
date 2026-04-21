@@ -9,6 +9,7 @@ class_name GalaxyGenerator
 var star_data: Array[Dictionary] = [] # Stores { "pos": Vector3, "type": String, "color": Color, "size": float, "name": String, "node": Area3D }
 var hyperlanes: Array[Vector2i] = [] 
 var adjacency_list: Dictionary = {} # Maps star integer index to an array of neighboring integer indices
+var astar_graph: AStar3D
 
 # Visual references
 var hyperlane_mesh_instance: MeshInstance3D
@@ -180,27 +181,34 @@ func _process(_delta):
 				var col_icon = star_data[i]["colonizer_icon"]
 				
 				if is_instance_valid(m_icon) and is_instance_valid(c_icon) and is_instance_valid(col_icon):
-					var has_military = false
-					var has_constructor = false
-					var has_colonizer = false
+					var has_military = false; var sel_m = false
+					var has_constructor = false; var sel_c = false
+					var has_colonizer = false; var sel_col = false
+					
 					var is_m_moving = false
 					var is_c_moving = false
 					var is_col_moving = false
 					
 					for f in fleet_manager.global_fleets:
 						if f["system_index"] == i:
+							var is_sel = f.has("selected") and f["selected"]
+							
 							if f.has("fleet_class"):
 								if f["fleet_class"] == "construction":
 									has_constructor = true
+									if is_sel: sel_c = true
 									if f["is_moving"]: is_c_moving = true
 								elif f["fleet_class"] == "colonizer":
 									has_colonizer = true
+									if is_sel: sel_col = true
 									if f["is_moving"]: is_col_moving = true
 								else:
 									has_military = true
+									if is_sel: sel_m = true
 									if f["is_moving"]: is_m_moving = true
 							else:
 								has_military = true
+								if is_sel: sel_m = true
 								if f["is_moving"]: is_m_moving = true
 								
 					var show_m = has_military
@@ -224,6 +232,11 @@ func _process(_delta):
 						
 					if is_col_moving: col_icon.rotation.z = -PI/2
 					else: col_icon.rotation.z = 0
+					
+					# High-contrast Selection Glow!
+					m_icon.modulate = Color(1.2, 2.5, 1.2) if sel_m else Color(1, 1, 1)
+					c_icon.modulate = Color(1.2, 2.5, 1.2) if sel_c else Color(1, 1, 1)
+					col_icon.modulate = Color(1.2, 2.5, 1.2) if sel_col else Color(1, 1, 1)
 
 # --- Procedural Data Generation ---
 
@@ -388,9 +401,21 @@ func generate_hyperlanes():
 		hyperlanes.append(remaining_edges[i])
 		
 	# Build adjacency list map for the System View arrows
+	astar_graph = AStar3D.new()
+	for i in range(star_data.size()):
+		astar_graph.add_point(i, star_data[i]["pos"])
+
 	for lane in hyperlanes:
 		adjacency_list[lane.x].append(lane.y)
 		adjacency_list[lane.y].append(lane.x)
+		astar_graph.connect_points(lane.x, lane.y, true)
+
+func get_hyperlane_path(start_idx: int, end_idx: int) -> Array:
+	if astar_graph == null or start_idx < 0 or end_idx < 0: return []
+	var path_64 = astar_graph.get_id_path(start_idx, end_idx)
+	var generic_arr = []
+	for p_id in path_64: generic_arr.append(int(p_id))
+	return generic_arr
 
 # --- Visualization & Interactions ---
 
@@ -789,8 +814,11 @@ func set_system_view(star_index: int):
 	system_view_nodes.clear()
 	black_hole_billboards.clear()
 	
-	if is_instance_valid(fleet_manager) and fleet_manager.has_method("clear_ships"):
-		fleet_manager.clear_ships()
+	if is_instance_valid(fleet_manager):
+		if fleet_manager.has_method("clear_ships"):
+			fleet_manager.clear_ships()
+		fleet_manager.is_dragging = false # Instantly mathematically terminate floating inputs before engine misinterprets coordinate deltas!
+		if fleet_manager.selection_box: fleet_manager.selection_box.queue_redraw()
 	
 	if is_instance_valid(galaxy_return_marker):
 		galaxy_return_marker.hide()
@@ -1323,28 +1351,40 @@ func _on_planet_input_event(camera, event, event_position, normal, shape_idx, p_
 		if is_instance_valid(fleet_manager) and fleet_manager.selected_fleets.size() > 0:
 			var dest = Vector3(p_node.global_position.x, 15.0, p_node.global_position.z)
 			for f in fleet_manager.selected_fleets:
-				fleet_manager.order_fleet_move(f, dest)
+				fleet_manager.dispatch_fleet_to_system_pos(f, fleet_manager.current_rendered_system, dest)
 			get_viewport().set_input_as_handled()
 
 var last_clicked_star: int = -1
 var last_click_time: float = 0.0
 
 func _on_star_input_event(camera, event, event_position, normal, shape_idx, star_index: int):
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		var current_time = Time.get_ticks_msec() / 1000.0
-		var cam = get_viewport().get_camera_3d()
-		
-		if cam and cam.has_method("focus_on_star"):
-			# Manual Physics double-click detection
-			if last_clicked_star == star_index and (current_time - last_click_time) < 0.4:
-				var ring_radius = max(275.0, sqrt(star_data[star_index]["mass"]) * 275.0)
-				cam.focus_on_star(star_data[star_index]["pos"], true, ring_radius)
-				set_system_view(star_index)
-				last_click_time = 0.0 # prevent triple execution
-			else:
-				# Single click does not pan camera anymore per user request
-				last_clicked_star = star_index
-				last_click_time = current_time
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+		if event.pressed:
+			var current_time = Time.get_ticks_msec() / 1000.0
+			var cam = get_viewport().get_camera_3d()
+			
+			if cam and cam.has_method("focus_on_star"):
+				# Manual Physics double-click detection
+				if last_clicked_star == star_index and (current_time - last_click_time) < 0.4:
+					var ring_radius = max(275.0, sqrt(star_data[star_index]["mass"]) * 275.0)
+					cam.focus_on_star(star_data[star_index]["pos"], true, ring_radius)
+					set_system_view(star_index)
+					last_click_time = 0.0 # prevent triple execution
+				else:
+					# Single click does not pan camera anymore per user request
+					last_clicked_star = star_index
+					last_click_time = current_time
+		get_viewport().set_input_as_handled()
+				
+	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		if is_instance_valid(fleet_manager) and fleet_manager.selected_fleets.size() > 0:
+			for f in fleet_manager.selected_fleets:
+				var start_loc = f["system_index"] if f.has("system_index") and f["system_index"] != -1 else f.get("target_system", -1)
+				if start_loc != -1 and start_loc != star_index:
+					var path = get_hyperlane_path(start_loc, star_index)
+					if path.size() > 1:
+						fleet_manager.order_intersystem_jump(f, path, star_index)
+			get_viewport().set_input_as_handled()
 
 # --- Math Helpers ---
 func _add_edge(u: int, v: int, edge_set: Dictionary, all_edges: Array):
