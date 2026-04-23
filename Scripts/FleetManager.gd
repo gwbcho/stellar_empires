@@ -459,19 +459,9 @@ func order_fleet_move(fleet: Dictionary, target_pos: Vector3):
 
 func order_fleet_jump(fleet: Dictionary, target_sys: int):
 	var curr_idx = fleet["system_index"]
-	var c_star = galaxy_generator.star_data[curr_idx]
-	var t_star = galaxy_generator.star_data[target_sys]
-	
-	var dir = (t_star["pos"] - c_star["pos"])
-	dir.y = 0
-	dir = dir.normalized()
-	
-	var ring_rad = max(275.0, sqrt(c_star["mass"]) * 275.0)
-	var edge_pos = c_star["pos"] + (dir * ring_rad)
-	edge_pos.y = 15.0 # Conform explicitly seamlessly matching constant 15.0 planar elevations natively!
-	
-	order_fleet_move(fleet, edge_pos) # Retrigger line graphics seamlessly overriding active routing perfectly
-	fleet["jump_target"] = target_sys # Map immediately after overriding locally
+	if curr_idx != -1:
+		var path = [curr_idx, target_sys]
+		order_intersystem_jump(fleet, path, target_sys)
 
 func _execute_jump(fleet: Dictionary):
 	var next_sys = fleet["jump_target"]
@@ -647,6 +637,28 @@ func _instantiate_fleet_geometry(fleet: Dictionary):
 	ring_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	ring.material_override = ring_mat
 	ship_node.add_child(ring)
+	
+	var class_sprite = Sprite3D.new()
+	var class_img = Image.new()
+	var icon_path = "res://Resources/fleet_icon.png"
+	
+	if fleet.has("fleet_class"):
+		if fleet["fleet_class"] == "construction":
+			icon_path = "res://Resources/constructor_icon.png"
+		elif fleet["fleet_class"] == "colonizer":
+			icon_path = "res://Resources/colonizer_icon.png"
+			
+	if class_img.load(icon_path) == OK:
+		class_sprite.texture = ImageTexture.create_from_image(class_img)
+		
+	class_sprite.position = Vector3(4.0, 0.0, 0.0) # Render physically outside the selection binding ring native!
+	class_sprite.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	class_sprite.pixel_size = 0.003
+	class_sprite.alpha_cut = SpriteBase3D.ALPHA_CUT_DISABLED
+	class_sprite.transparent = true
+	class_sprite.cast_shadow = false
+	class_sprite.shaded = false
+	ship_node.add_child(class_sprite)
 	
 	add_child(ship_node)
 	fleet["visual_node"] = ship_node
