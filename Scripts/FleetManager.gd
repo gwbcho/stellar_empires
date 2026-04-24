@@ -640,13 +640,13 @@ func _instantiate_fleet_geometry(fleet: Dictionary):
 	
 	var class_sprite = Sprite3D.new()
 	var class_img = Image.new()
-	var icon_path = "res://Resources/fleet_icon.png"
+	var icon_path = "res://Resources/icon_fleet.png"
 	
 	if fleet.has("fleet_class"):
 		if fleet["fleet_class"] == "construction":
-			icon_path = "res://Resources/constructor_icon.png"
+			icon_path = "res://Resources/icon_constructor.png"
 		elif fleet["fleet_class"] == "colonizer":
-			icon_path = "res://Resources/colonizer_icon.png"
+			icon_path = "res://Resources/icon_colonizer.png"
 			
 	if class_img.load(icon_path) == OK:
 		class_sprite.texture = ImageTexture.create_from_image(class_img)
@@ -681,3 +681,39 @@ func clear_ships():
 		if f.has("pending_system_wp") and is_instance_valid(f["pending_system_wp"]):
 			f["pending_system_wp"].queue_free()
 			f.erase("pending_system_wp")
+
+func get_transit_time_remaining(fleet: Dictionary) -> float:
+	var total_time = 0.0
+	
+	if fleet.get("is_moving", false) and fleet.has("target_pos") and fleet.has("local_pos"):
+		total_time += fleet["local_pos"].distance_to(fleet["target_pos"]) / fleet["speed"]
+		
+	if fleet.has("hyperlane_path") and fleet["hyperlane_path"].size() > 1:
+		if fleet.get("is_jumping", false):
+			var t_pos = galaxy_generator.star_data[fleet["hyperlane_path"][1]]["pos"]
+			var dist = fleet["map_local_pos"].distance_to(t_pos)
+			
+			# Compensate directly natively tracking partial completion across the node mathematically!
+			var elapsed = float(Time.get_unix_time_from_system()) - fleet.get("jump_start_time", float(Time.get_unix_time_from_system()))
+			var remaining_dist = max(0.0, dist - (50.0 * elapsed))
+			total_time += remaining_dist / 50.0
+			
+		var start_idx = 1 if fleet.get("is_jumping", false) else 0
+		for i in range(start_idx, fleet["hyperlane_path"].size() - 1):
+			var s_idx = fleet["hyperlane_path"][i]
+			var t_idx = fleet["hyperlane_path"][i+1]
+			var s_pos = galaxy_generator.star_data[s_idx]["pos"]
+			var t_pos = galaxy_generator.star_data[t_idx]["pos"]
+			total_time += s_pos.distance_to(t_pos) / 50.0
+			
+			# Only add intermediate system sublight crossing structural delays sequentially!
+			if i > 0:
+				var rad_s = max(275.0, sqrt(galaxy_generator.star_data[s_idx]["mass"]) * 275.0)
+				total_time += (rad_s * 2.0) / fleet["speed"]
+			
+		if fleet.has("final_local_target") and typeof(fleet["final_local_target"]) == TYPE_VECTOR3:
+			var dest_star = galaxy_generator.star_data[fleet["target_system"]]
+			var rad_dest = max(275.0, sqrt(dest_star["mass"]) * 275.0)
+			total_time += rad_dest / fleet["speed"]
+			
+	return total_time

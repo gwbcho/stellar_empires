@@ -175,10 +175,10 @@ func _process(_delta):
 	# Sync Galaxy Map Fleet Indicators Dynamically exactly explicitly tracking logical arrays universally!
 	if is_instance_valid(fleet_manager):
 		for i in range(star_data.size()):
-			if star_data[i].has("fleet_icon") and star_data[i].has("constructor_icon") and star_data[i].has("colonizer_icon"):
-				var m_icon = star_data[i]["fleet_icon"]
-				var c_icon = star_data[i]["constructor_icon"]
-				var col_icon = star_data[i]["colonizer_icon"]
+			if star_data[i].has("icon_fleet") and star_data[i].has("icon_constructor") and star_data[i].has("icon_colonizer"):
+				var m_icon = star_data[i]["icon_fleet"]
+				var c_icon = star_data[i]["icon_constructor"]
+				var col_icon = star_data[i]["icon_colonizer"]
 				
 				if is_instance_valid(m_icon) and is_instance_valid(c_icon) and is_instance_valid(col_icon):
 					var has_military = false; var sel_m = false
@@ -426,7 +426,7 @@ func get_system_planets(star_idx: int) -> Array:
 		return [
 			{"name": "Mercury", "type": "Rocky", "radius": 0.6, "orbit": 25.0, "c1": Color(0.4, 0.4, 0.45), "c2": Color(0.2, 0.2, 0.25)},
 			{"name": "Venus", "type": "Gas", "radius": 1.2, "orbit": 40.0, "c1": Color(0.9, 0.8, 0.5), "c2": Color(0.8, 0.6, 0.3)}, 
-			{"name": "Earth", "type": "Habitable", "radius": 1.3, "orbit": 55.0, "c1": Color(0.05, 0.2, 0.6), "c2": Color(0.1, 0.5, 0.2), "c3": Color(1.0, 1.0, 1.0)},
+			{"name": "Earth", "type": "Habitable", "radius": 1.3, "orbit": 55.0, "c1": Color(0.05, 0.2, 0.6), "c2": Color(0.1, 0.5, 0.2), "c3": Color(1.0, 1.0, 1.0), "owner": "humans"},
 			{"name": "Mars", "type": "Rocky", "radius": 0.8, "orbit": 70.0, "c1": Color(0.8, 0.3, 0.1), "c2": Color(0.5, 0.15, 0.05)},
 			{"name": "Jupiter", "type": "Gas", "radius": 4.5, "orbit": 110.0, "c1": Color(0.8, 0.7, 0.6), "c2": Color(0.6, 0.4, 0.2)},
 			{"name": "Saturn", "type": "Gas", "radius": 3.8, "orbit": 150.0, "c1": Color(0.9, 0.8, 0.6), "c2": Color(0.7, 0.6, 0.4), "has_rings": true, "ring_inner": 1.3, "ring_outer": 2.4, "ring_color": Color(0.85, 0.8, 0.65, 0.85)},
@@ -531,6 +531,12 @@ func does_system_have_habitable(star_idx: int) -> bool:
 		if p["type"] == "Habitable": return true
 	return false
 
+func get_system_colony_owner(star_idx: int) -> String:
+	var planets = get_system_planets(star_idx)
+	for p in planets:
+		if p.has("owner"): return p["owner"]
+	return ""
+
 func visualize_galaxy():
 	for i in range(star_data.size()):
 		var star = star_data[i]
@@ -625,28 +631,62 @@ func visualize_galaxy():
 		ui_nodes.append(label)
 		
 		if has_life:
-			var icon = Label3D.new()
-			icon.text = "🌐"
-			icon.font_size = 400
-			icon.modulate = Color(0.2, 1.0, 0.5)
+			var colony_owner = get_system_colony_owner(i)
+			var texture_path = ""
 			
-			# Natively place Habitable icon left of the actual star, pulled to Z=0.0 to sit neutrally behind UI depth!
-			var l_offset_x = -final_size * 2.2 - 1.5
-			icon.position = Vector3(l_offset_x, 0.0, 0.0)
-			icon.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-			icon.visibility_range_end = 250.0 
-			icon.visibility_range_end_margin = 10.0
-			icon.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
-			icon.extra_cull_margin = 16000.0 
-			icon.offset = Vector2.ZERO 
-			
-			area.add_child(icon)
-			ui_nodes.append(icon)
+			if colony_owner == "humans":
+				texture_path = "res://Resources/icon_colonized_planet.png"
+			elif colony_owner == "hostile":
+				texture_path = "res://Resources/icon_colonized_planet_red.png"
+			elif colony_owner == "contested":
+				texture_path = "res://Resources/icon_colonized_planet_contested.png"
+			elif colony_owner != "":
+				texture_path = "res://Resources/icon_colonized_planet_yellow.png"
+				
+			if texture_path != "":
+				var icon = Sprite3D.new()
+				var img = Image.new()
+				if img.load(texture_path) == OK:
+					icon.texture = ImageTexture.create_from_image(img)
+					
+				var l_offset_x = -final_size * 2.2 - 1.5
+				icon.position = Vector3(l_offset_x, 0.0, 0.0)
+				icon.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				icon.visibility_range_end = 250.0 
+				icon.visibility_range_end_margin = 10.0
+				icon.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+				icon.extra_cull_margin = 16000.0 
+				icon.pixel_size = 0.012 # Scaled identically to match legacy 400pt Label3D presence
+				icon.alpha_cut = SpriteBase3D.ALPHA_CUT_DISABLED
+				icon.transparent = true
+				icon.cast_shadow = false
+				icon.shaded = false
+				
+				area.add_child(icon)
+				ui_nodes.append(icon)
+			else:
+				var icon = Label3D.new()
+				icon.text = "🌐"
+				icon.font_size = 400
+				icon.modulate = Color(0.2, 1.0, 0.5)
+				
+				# Natively place Habitable icon left of the actual star, pulled to Z=0.0 to sit neutrally behind UI depth!
+				var l_offset_x = -final_size * 2.2 - 1.5
+				icon.position = Vector3(l_offset_x, 0.0, 0.0)
+				icon.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				icon.visibility_range_end = 250.0 
+				icon.visibility_range_end_margin = 10.0
+				icon.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+				icon.extra_cull_margin = 16000.0 
+				icon.offset = Vector2.ZERO 
+				
+				area.add_child(icon)
+				ui_nodes.append(icon)
 			
 		# Military Fleet (Right of Star)
 		var ship_sprite = Sprite3D.new()
 		var fleet_img = Image.new()
-		if fleet_img.load("res://Resources/fleet_icon.png") == OK:
+		if fleet_img.load("res://Resources/icon_fleet.png") == OK:
 			ship_sprite.texture = ImageTexture.create_from_image(fleet_img)
 			
 		var r_offset_x = final_size * 2.2 + 1.5 
@@ -661,12 +701,12 @@ func visualize_galaxy():
 		
 		area.add_child(ship_sprite)
 		ui_nodes.append(ship_sprite)
-		star["fleet_icon"] = ship_sprite
+		star["icon_fleet"] = ship_sprite
 		
 		# Constructor Fleet (Right of Star)
 		var const_sprite = Sprite3D.new()
 		var const_img = Image.new()
-		if const_img.load("res://Resources/constructor_icon.png") == OK:
+		if const_img.load("res://Resources/icon_constructor.png") == OK:
 			const_sprite.texture = ImageTexture.create_from_image(const_img)
 			
 		const_sprite.position = Vector3(r_offset_x, 0.0, 0.0)
@@ -680,12 +720,12 @@ func visualize_galaxy():
 		
 		area.add_child(const_sprite)
 		ui_nodes.append(const_sprite)
-		star["constructor_icon"] = const_sprite
+		star["icon_constructor"] = const_sprite
 		
 		# Colonizer Fleet (Right of Star)
 		var col_sprite = Sprite3D.new()
 		var col_img = Image.new()
-		if col_img.load("res://Resources/colonizer_icon.png") == OK:
+		if col_img.load("res://Resources/icon_colonizer.png") == OK:
 			col_sprite.texture = ImageTexture.create_from_image(col_img)
 			
 		# Render in exact same spot as the others natively (the active one becomes visible)
@@ -700,7 +740,7 @@ func visualize_galaxy():
 		
 		area.add_child(col_sprite)
 		ui_nodes.append(col_sprite)
-		star["colonizer_icon"] = col_sprite
+		star["icon_colonizer"] = col_sprite
 		
 		star["ui_plate_nodes"] = ui_nodes
 		
@@ -1175,24 +1215,63 @@ func set_system_view(star_index: int):
 		ui_array.append(p_label)
 		
 		if is_habitable:
-			var icon = Label3D.new()
-			icon.text = "🌐"
-			icon.font_size = 250
-			icon.modulate = Color(0.2, 1.0, 0.5) 
-			icon.position = Vector3(0, -outer_boundary - 3.5, 0.12)
-			icon.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-			icon.visibility_range_end = 120.0 
-			icon.visibility_range_end_margin = 10.0
-			icon.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
-			icon.extra_cull_margin = 16000.0 # Binds bounds natively!
+			var has_colony = p_info.has("owner")
+			var texture_path = ""
 			
-			var space_width = 7.0 * 55.0
-			var text_width = exact_text.length() * 145.0
-			var text_start_x = (space_width - text_width) / 2.0
-			icon.offset = Vector2(text_start_x - 180.0, 0) # Scales explicit UI positioning perfectly
-			
-			planet_node.add_child(icon)
-			ui_array.append(icon)
+			if has_colony:
+				if p_info["owner"] == "humans":
+					texture_path = "res://Resources/icon_colonized_planet.png"
+				elif p_info["owner"] == "hostile":
+					texture_path = "res://Resources/icon_colonized_planet_red.png"
+				elif p_info["owner"] == "contested":
+					texture_path = "res://Resources/icon_colonized_planet_contested.png"
+				else:
+					texture_path = "res://Resources/icon_colonized_planet_yellow.png"
+					
+			if texture_path != "":
+				var icon = Sprite3D.new()
+				var img = Image.new()
+				if img.load(texture_path) == OK:
+					icon.texture = ImageTexture.create_from_image(img)
+				
+				icon.position = Vector3(0, -outer_boundary - 3.5, 0.12)
+				icon.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				icon.visibility_range_end = 120.0 
+				icon.visibility_range_end_margin = 10.0
+				icon.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+				icon.extra_cull_margin = 16000.0
+				icon.pixel_size = 0.008 # Matches legacy 250pt Label3D scale perfectly at deep system zoom levels
+				icon.alpha_cut = SpriteBase3D.ALPHA_CUT_DISABLED
+				icon.transparent = true
+				icon.cast_shadow = false
+				icon.shaded = false
+				
+				var space_width = 7.0 * 55.0
+				var text_width = exact_text.length() * 145.0
+				var text_start_x = (space_width - text_width) / 2.0
+				icon.offset = Vector2(text_start_x - 180.0, 0) # Fixed Sprite3D scalar rendering explicitly 
+				
+				planet_node.add_child(icon)
+				ui_array.append(icon)
+			else:
+				var icon = Label3D.new()
+				icon.text = "🌐"
+				icon.font_size = 250
+				icon.modulate = Color(0.2, 1.0, 0.5) 
+				icon.position = Vector3(0, -outer_boundary - 3.5, 0.12)
+				icon.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+				icon.visibility_range_end = 120.0 
+				icon.visibility_range_end_margin = 10.0
+				icon.visibility_range_fade_mode = GeometryInstance3D.VISIBILITY_RANGE_FADE_SELF
+				icon.extra_cull_margin = 16000.0 
+				
+				var space_width = 7.0 * 55.0
+				var text_width = exact_text.length() * 145.0
+				var text_start_x = (space_width - text_width) / 2.0
+				icon.offset = Vector2(text_start_x - 180.0, 0) 
+				
+				planet_node.add_child(icon)
+				ui_array.append(icon)
 		
 		# Pass the whole UI array structurally!
 		planet_area.mouse_entered.connect(_on_planet_hover_enter.bind(ui_array))

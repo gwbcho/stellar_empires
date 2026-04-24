@@ -273,6 +273,13 @@ func _on_fleet_category_pressed(category: String):
 				loc_lbl.set_meta("fleet_ref", f) # Hard-ties the memory reference to the UI physically!
 				vbox.add_child(loc_lbl)
 				
+				var time_lbl = Label.new()
+				time_lbl.text = "Transit Time: N/A"
+				time_lbl.add_theme_color_override("font_color", Color(0.8, 0.6, 0.2))
+				time_lbl.add_theme_font_size_override("font_size", 14)
+				time_lbl.set_meta("fleet_ref", f)
+				vbox.add_child(time_lbl)
+				
 				fleet_list_container.add_child(item_box)
 				
 				var small_hs = HSeparator.new()
@@ -332,8 +339,9 @@ func _process(_delta):
 			for item_box in fleet_list_container.get_children():
 				if item_box is PanelContainer and item_box.get_child_count() > 0:
 					var vbox = item_box.get_child(0)
-					if vbox is VBoxContainer and vbox.get_child_count() > 1:
+					if vbox is VBoxContainer and vbox.get_child_count() > 2:
 						var loc_lbl = vbox.get_child(1)
+						var time_lbl = vbox.get_child(2)
 						if loc_lbl.has_meta("fleet_ref"):
 							var f = loc_lbl.get_meta("fleet_ref")
 							var loc_name = "Deep Space"
@@ -347,6 +355,14 @@ func _process(_delta):
 							var exact_text = loc_name
 							if loc_lbl.text != exact_text:
 								loc_lbl.text = exact_text
+								
+							var fm = get_parent().get_node_or_null("GalaxyGenerator/FleetManager")
+							if fm and fm.has_method("get_transit_time_remaining"):
+								var tr = fm.get_transit_time_remaining(f)
+								if tr > 0.1:
+									time_lbl.text = "Transit Time: %.1fs" % tr
+								else:
+									time_lbl.text = "Transit Time: 0s"
 								
 							# Native style rendering checking physical selected memory natively!
 							var is_sel = f.has("selected") and f["selected"]
