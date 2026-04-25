@@ -1148,7 +1148,7 @@ func set_system_view(star_index: int):
 	var star_col = CollisionShape3D.new()
 	var star_shape = SphereShape3D.new()
 	# Mathematically enforce a rigid 30.0 unit minimum collision radius to prevent microscopic stars from becoming unclickable
-	star_shape.radius = max(c_rad * 1.5, 30.0)
+	star_shape.radius = max(c_rad * 1.5, 10.0)
 	star_col.shape = star_shape
 	star_area.add_child(star_col)
 	star_area.input_event.connect(_on_system_star_input_event.bind(star_index))
