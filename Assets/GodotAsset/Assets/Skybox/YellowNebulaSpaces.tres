@@ -1,0 +1,9 @@
+[gd_resource type="Sky" load_steps=3 format=3 uid="uid://bs5u4d5uc1kx5"]
+
+[ext_resource type="Texture2D" uid="uid://dqpqkf2a8cqlb" path="res://Assets/Skybox/yellowNebula.png" id="1_ijpkw"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_nst3g"]
+panorama = ExtResource("1_ijpkw")
+
+[resource]
+sky_material = SubResource("PanoramaSkyMaterial_nst3g")

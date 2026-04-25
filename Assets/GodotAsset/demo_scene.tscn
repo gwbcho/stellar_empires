@@ -1,0 +1,271 @@
+[gd_scene load_steps=60 format=3 uid="uid://bw6yjtddao301"]
+
+[ext_resource type="PackedScene" uid="uid://bqlee528u5ibt" path="res://Assets/Planets/Planet4.tscn" id="1_a84ui"]
+[ext_resource type="PackedScene" uid="uid://jnjc508djkec" path="res://Assets/Planets/Planet5.tscn" id="2_8s33a"]
+[ext_resource type="PackedScene" uid="uid://bhn24jbt4dn3l" path="res://Assets/Planets/Planet6.tscn" id="3_ubvpd"]
+[ext_resource type="PackedScene" uid="uid://c48454jf2a8l" path="res://Assets/Planets/Planet7.tscn" id="4_fra4j"]
+[ext_resource type="PackedScene" uid="uid://cvb3s1wqg7co3" path="res://Assets/Planets/Planet8.tscn" id="5_hnnfi"]
+[ext_resource type="PackedScene" uid="uid://cl4nof7o7vs03" path="res://Assets/Planets/Planet9.tscn" id="6_oen2o"]
+[ext_resource type="PackedScene" uid="uid://djxntmqlccpht" path="res://Assets/Planets/Planet10.tscn" id="7_kb38r"]
+[ext_resource type="PackedScene" uid="uid://u3t3jqpswl1r" path="res://Assets/Planets/Planet11.tscn" id="8_2s8px"]
+[ext_resource type="PackedScene" uid="uid://ded6opkro5evb" path="res://Assets/Planets/Planet12.tscn" id="9_ijsy7"]
+[ext_resource type="PackedScene" uid="uid://cdiwq6uyq5hql" path="res://Assets/Planets/Planet13.tscn" id="10_eq48t"]
+[ext_resource type="PackedScene" uid="uid://cu4kgiyyswdpb" path="res://Assets/Planets/PlanetDestroid.tscn" id="11_tq4r3"]
+[ext_resource type="PackedScene" uid="uid://cjvwfgty8vpyu" path="res://Assets/Planets/Planet1.tscn" id="12_ybv1j"]
+[ext_resource type="PackedScene" uid="uid://77bennk1umxm" path="res://Assets/Planets/Planet2.tscn" id="13_0bpnx"]
+[ext_resource type="PackedScene" uid="uid://deciocfvgxe7p" path="res://Assets/Planets/Planet3.tscn" id="14_47ryp"]
+[ext_resource type="PackedScene" uid="uid://db84siktff6rl" path="res://Assets/SpaceShips/AetherVoyager465.tscn" id="15_sdkjf"]
+[ext_resource type="PackedScene" uid="uid://chg1laukkax3t" path="res://Assets/Comet/AsteroidCristal.tscn" id="15_xii1s"]
+[ext_resource type="PackedScene" uid="uid://d32py8onws7m1" path="res://Assets/SpaceShips/AstralValkyrie.tscn" id="16_eyrsm"]
+[ext_resource type="PackedScene" uid="uid://cunawqjneb5ig" path="res://Assets/Comet/AsteroidCristall2.tscn" id="16_obgtg"]
+[ext_resource type="PackedScene" uid="uid://crefp3yytyepg" path="res://Assets/Comet/AsteroidCristall3.tscn" id="17_22pxh"]
+[ext_resource type="PackedScene" uid="uid://b8bbh5csjqhur" path="res://Assets/SpaceShips/CelestialEnigma412.tscn" id="17_e0u75"]
+[ext_resource type="PackedScene" uid="uid://suvn8pat3jpg" path="res://Assets/SpaceShips/CometStrider.tscn" id="18_34w2s"]
+[ext_resource type="PackedScene" uid="uid://dqxawrl8hk7mu" path="res://Assets/Comet/Asteroid_1.tscn" id="18_iiao7"]
+[ext_resource type="PackedScene" uid="uid://bbtvtgslbfjf8" path="res://Assets/SpaceShips/EclipseSerpent444.tscn" id="19_jn20a"]
+[ext_resource type="PackedScene" uid="uid://ck54fptobd5ry" path="res://Assets/Comet/Asteroid_1Circle.tscn" id="19_umkai"]
+[ext_resource type="PackedScene" uid="uid://b8qp1h024u0dk" path="res://Assets/SpaceShips/ExpiremitalRaptor.tscn" id="20_gjcii"]
+[ext_resource type="PackedScene" uid="uid://lmvbj4rjq47j" path="res://Assets/Comet/Asteroid_2.tscn" id="20_p8w5a"]
+[ext_resource type="PackedScene" uid="uid://bdyji4jhki1od" path="res://Assets/SpaceShips/GalacticMirage.tscn" id="21_qegxm"]
+[ext_resource type="PackedScene" uid="uid://dnj7md601y7va" path="res://Assets/Comet/Asteroid_3.tscn" id="21_sgpbk"]
+[ext_resource type="PackedScene" uid="uid://csjrtko7n251" path="res://Assets/SpaceShips/LuminousGhost.tscn" id="22_s05y2"]
+[ext_resource type="PackedScene" uid="uid://b5aa50eytuuat" path="res://Assets/Comet/Asteroid_4.tscn" id="22_t53j8"]
+[ext_resource type="PackedScene" uid="uid://dc183woq34y5s" path="res://Assets/SpaceShips/NebulaDrifter425.tscn" id="23_isv5a"]
+[ext_resource type="PackedScene" uid="uid://bux53if2tchlq" path="res://Assets/Comet/Asteroid_5.tscn" id="23_naqe0"]
+[ext_resource type="PackedScene" uid="uid://c5amu8xl1153j" path="res://Assets/SpaceShips/NebulaDrifter999.tscn" id="24_o6nil"]
+[ext_resource type="PackedScene" uid="uid://dcn5coyydo8ur" path="res://Assets/Comet/Asteroid_6.tscn" id="24_p0yca"]
+[ext_resource type="PackedScene" uid="uid://d0w80s1ixbc72" path="res://Assets/SpaceShips/OrbitalRaptor.tscn" id="25_16nol"]
+[ext_resource type="PackedScene" uid="uid://4ta6sue7tagc" path="res://Assets/Comet/Asteroid_7.tscn" id="25_575b1"]
+[ext_resource type="PackedScene" uid="uid://du0vyqlcifx6k" path="res://Assets/SpaceShips/ProtoRaptor.tscn" id="26_ewfty"]
+[ext_resource type="PackedScene" uid="uid://ca7nyc3wxjyn8" path="res://Assets/Comet/Asteroid_8.tscn" id="26_p7c38"]
+[ext_resource type="PackedScene" uid="uid://bbd0j415tn47f" path="res://Assets/Comet/Asteroid_9.tscn" id="27_4xf0x"]
+[ext_resource type="PackedScene" uid="uid://b044nfr4mo3sv" path="res://Assets/SpaceShips/SolarRevenant.tscn" id="27_bgcup"]
+[ext_resource type="PackedScene" uid="uid://dm1volj0u0bjc" path="res://Assets/Comet/Asteroid_10.tscn" id="28_8u1jl"]
+[ext_resource type="PackedScene" uid="uid://csqpsihbein4g" path="res://Assets/SpaceShips/SolarValkyrie.tscn" id="28_dka35"]
+[ext_resource type="PackedScene" uid="uid://cqbvr1mxh8rxg" path="res://Assets/SpaceShips/SpeedRaptor.tscn" id="29_82tl4"]
+[ext_resource type="PackedScene" uid="uid://ilsu0f4m74ta" path="res://Assets/Comet/Asteroid_11.tscn" id="29_cwit5"]
+[ext_resource type="PackedScene" uid="uid://caftvxi2emc80" path="res://Assets/SpaceShips/StalkerValkyrie.tscn" id="30_4ujba"]
+[ext_resource type="PackedScene" uid="uid://blnv7l4kum4ka" path="res://Assets/Comet/Asteroid_12.tscn" id="30_gv4xh"]
+[ext_resource type="PackedScene" uid="uid://domc2fvgele1x" path="res://Assets/Comet/Asteroid_13.tscn" id="31_5goji"]
+[ext_resource type="PackedScene" uid="uid://b7xfv1e6yga3o" path="res://Assets/SpaceShips/StarryRaptor.tscn" id="31_ka7yw"]
+[ext_resource type="PackedScene" uid="uid://bvue1fbv8ibdt" path="res://Assets/SpaceShips/StarryWanderer.tscn" id="32_8duki"]
+[ext_resource type="PackedScene" uid="uid://c2xnw64geo135" path="res://Assets/Comet/Asteroid_14.tscn" id="32_dk3ql"]
+[ext_resource type="PackedScene" uid="uid://c3kr37y46rogj" path="res://Assets/Comet/Asteroid_15.tscn" id="33_20er5"]
+[ext_resource type="PackedScene" uid="uid://ws3yufjhvx7q" path="res://Assets/SpaceShips/VoidPhantom22.tscn" id="33_r46ah"]
+[ext_resource type="PackedScene" uid="uid://cwm2kls2rp5h1" path="res://Assets/SpaceShips/ZenithHunter.tscn" id="34_scja5"]
+[ext_resource type="PackedScene" uid="uid://5ka6bnd3fvss" path="res://Assets/Comet/Asteroid_Circle_dual.tscn" id="34_vaia4"]
+[ext_resource type="PackedScene" uid="uid://chjfsje0u7omp" path="res://Assets/SpaceStation/ChargeStation.tscn" id="35_j1ukp"]
+[ext_resource type="PackedScene" uid="uid://cblbvk65bl0w0" path="res://Assets/SpaceStation/SpaceStation.tscn" id="36_wiulp"]
+[ext_resource type="Sky" uid="uid://bs5u4d5uc1kx5" path="res://Assets/Skybox/YellowNebulaSpaces.tres" id="37_hfcyn"]
+[ext_resource type="Script" path="res://Camera3D.gd" id="58_xwgtj"]
+
+[sub_resource type="Environment" id="Environment_sq2af"]
+background_mode = 2
+sky = ExtResource("37_hfcyn")
+ambient_light_source = 3
+reflected_light_source = 2
+tonemap_mode = 2
+glow_enabled = true
+glow_hdr_threshold = 1.63
+adjustment_enabled = true
+
+[node name="DemoScene" type="Node3D"]
+
+[node name="Env" type="Node" parent="."]
+
+[node name="Planets" type="Node3D" parent="Env"]
+transform = Transform3D(7.76, 0, 0, 0, 7.76, 0, 0, 0, 7.76, -2.22, -6.455, 2000)
+
+[node name="Planet42" parent="Env/Planets" instance=ExtResource("1_a84ui")]
+transform = Transform3D(0.999999, 0, 0.00118682, 0, 1, 0, -0.00118682, 0, 0.999999, -65.4245, 0, -328.689)
+
+[node name="Planet52" parent="Env/Planets" instance=ExtResource("2_8s33a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.305, 0, -325.483)
+
+[node name="Planet62" parent="Env/Planets" instance=ExtResource("3_ubvpd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -101.373, 0, -329.144)
+
+[node name="Planet102" parent="Env/Planets" instance=ExtResource("4_fra4j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -38.5346, 0, -379.259)
+
+[node name="Planet112" parent="Env/Planets" instance=ExtResource("5_hnnfi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -79.0015, 0, -378.728)
+
+[node name="Planet122" parent="Env/Planets" instance=ExtResource("6_oen2o")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 77.3835, 0, -360.261)
+
+[node name="Planet132" parent="Env/Planets" instance=ExtResource("7_kb38r")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.4073, 0, -378.468)
+
+[node name="Planet152" parent="Env/Planets" instance=ExtResource("8_2s8px")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.6047, 0, -382.678)
+
+[node name="Planet162" parent="Env/Planets" instance=ExtResource("9_ijsy7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.2816, 0, -358.201)
+
+[node name="Planet172" parent="Env/Planets" instance=ExtResource("10_eq48t")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 79.9525, 0, -380.281)
+
+[node name="PlanetDestroid2" parent="Env/Planets" instance=ExtResource("11_tq4r3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.4535, 0, -327.401)
+
+[node name="Planet12" parent="Env/Planets" instance=ExtResource("12_ybv1j")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 91.6404, 500.194, -377.321)
+
+[node name="Planet22" parent="Env/Planets" instance=ExtResource("13_0bpnx")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.1144, 768.866, -373.794)
+
+[node name="Planet82" parent="Env/Planets" instance=ExtResource("14_47ryp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 456.267, 0, -275.806)
+
+[node name="Astro" type="Node3D" parent="Env"]
+
+[node name="AsteroidCristal2" parent="Env/Astro" instance=ExtResource("15_xii1s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50.6948, 0, -1294.11)
+
+[node name="AsteroidCristall22" parent="Env/Astro" instance=ExtResource("16_obgtg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -88.9828, 0, -1294.11)
+
+[node name="AsteroidCristall32" parent="Env/Astro" instance=ExtResource("17_22pxh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 146.042, 0, -1294.11)
+
+[node name="Asteroid (1)" parent="Env/Astro" instance=ExtResource("18_iiao7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 174.717, 0, -1294.11)
+
+[node name="AsteroidCircle2" parent="Env/Astro" instance=ExtResource("19_umkai")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -299.238, 0, -1294.11)
+
+[node name="Asteroid (2)" parent="Env/Astro" instance=ExtResource("20_p8w5a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.833, -134.267, -1276)
+
+[node name="Asteroid (2)2" parent="Env/Astro" instance=ExtResource("21_sgpbk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -144.232, 0, -1294.11)
+
+[node name="Asteroid (4)" parent="Env/Astro" instance=ExtResource("22_t53j8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -164.86, 0, -1294.11)
+
+[node name="Asteroid (5)" parent="Env/Astro" instance=ExtResource("23_naqe0")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -185.332, 0, -1294.11)
+
+[node name="Asteroid_0012" parent="Env/Astro" instance=ExtResource("24_p0yca")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -213.132, 0, -1294.11)
+
+[node name="Asteroid_0022" parent="Env/Astro" instance=ExtResource("25_575b1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 92.51, 0, -1294.11)
+
+[node name="Asteroid_0032" parent="Env/Astro" instance=ExtResource("26_p7c38")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -239.758, 0, -1294.11)
+
+[node name="Asteroid_0042" parent="Env/Astro" instance=ExtResource("27_4xf0x")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 213.812, 0, -1294.11)
+
+[node name="Asteroid_0052" parent="Env/Astro" instance=ExtResource("28_8u1jl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -300.299, 0, -1294.11)
+
+[node name="Asteroid_0062" parent="Env/Astro" instance=ExtResource("29_cwit5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 250.064, 0, -1294.11)
+
+[node name="Asteroid_0072" parent="Env/Astro" instance=ExtResource("30_gv4xh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -262.537, 0, -1294.11)
+
+[node name="Asteroid_0082" parent="Env/Astro" instance=ExtResource("31_5goji")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -116.784, 0, -1294.11)
+
+[node name="Asteroid_0092" parent="Env/Astro" instance=ExtResource("32_dk3ql")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58.4426, 0, -1294.11)
+
+[node name="Asteroid2" parent="Env/Astro" instance=ExtResource("33_20er5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 120.683, 0, -1294.11)
+
+[node name="AsteroidCircleDual2" parent="Env/Astro" instance=ExtResource("34_vaia4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.75235, 0, -1294.11)
+
+[node name="Ships" type="Node" parent="."]
+
+[node name="Ships" type="Node3D" parent="Ships"]
+
+[node name="AetherVoyager4652" parent="Ships/Ships" instance=ExtResource("15_sdkjf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.2459, 0, -63.7208)
+
+[node name="AstralValkyrie2" parent="Ships/Ships" instance=ExtResource("16_eyrsm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.4511, 0, -23.7229)
+
+[node name="CelestialEnigma4122" parent="Ships/Ships" instance=ExtResource("17_e0u75")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.5463, 0, -132.088)
+
+[node name="CometStrider2" parent="Ships/Ships" instance=ExtResource("18_34w2s")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -79.4905, 0, -122.795)
+
+[node name="EclipseSerpent4442" parent="Ships/Ships" instance=ExtResource("19_jn20a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.1851, 0, -72.3496)
+
+[node name="ExpiremitalRaptor2" parent="Ships/Ships" instance=ExtResource("20_gjcii")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 113.079, 0, -24.5136)
+
+[node name="GalacticMirage2" parent="Ships/Ships" instance=ExtResource("21_qegxm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 120.14, 0, -128.769)
+
+[node name="LuminousGhost2" parent="Ships/Ships" instance=ExtResource("22_s05y2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.9548, 0, -65.2446)
+
+[node name="NebulaDrifter4252" parent="Ships/Ships" instance=ExtResource("23_isv5a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.95636, 0, -26.5503)
+
+[node name="NebulaDrifter9992" parent="Ships/Ships" instance=ExtResource("24_o6nil")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70.8831, 0, -26.1693)
+
+[node name="OrbitalRaptor2" parent="Ships/Ships" instance=ExtResource("25_16nol")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.4339, 0, -132.742)
+
+[node name="ProtoRaptor2" parent="Ships/Ships" instance=ExtResource("26_ewfty")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.9675, 0, -24.25)
+
+[node name="SolarRevenant2" parent="Ships/Ships" instance=ExtResource("27_bgcup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.9972, 0, -67.7034)
+
+[node name="SolarValkyrie2" parent="Ships/Ships" instance=ExtResource("28_dka35")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.8109, 0, -23.8953)
+
+[node name="SpeedRaptor2" parent="Ships/Ships" instance=ExtResource("29_82tl4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 93.3099, 0, -23.4593)
+
+[node name="StalkerValkyrie2" parent="Ships/Ships" instance=ExtResource("30_4ujba")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 51.136, 0, -24.7772)
+
+[node name="StarryRaptor2" parent="Ships/Ships" instance=ExtResource("31_ka7yw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -53.7738, 0, -24.3242)
+
+[node name="StarryWanderer2" parent="Ships/Ships" instance=ExtResource("32_8duki")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94.1385, 0, -73.6771)
+
+[node name="VoidPhantom222" parent="Ships/Ships" instance=ExtResource("33_r46ah")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82.9697, 0, -130.76)
+
+[node name="ZenithHunter2" parent="Ships/Ships" instance=ExtResource("34_scja5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.1711, 0, -132.088)
+
+[node name="SpaceStation" type="Node3D" parent="Ships"]
+
+[node name="ChargeStation2" parent="Ships/SpaceStation" instance=ExtResource("35_j1ukp")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, 261.378, 0, -279.081)
+
+[node name="SpaceStation2" parent="Ships/SpaceStation" instance=ExtResource("36_wiulp")]
+transform = Transform3D(4.55, 0, 0, 0, 4.55, 0, 0, 0, 4.55, -152.202, 0, -255.732)
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sq2af")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="WorldEnvironment"]
+transform = Transform3D(1, 0, 0, 0, 0.608471, 0.793576, 0, -0.793576, 0.608471, -19.113, 113.503, 0)
+directional_shadow_mode = 0
+sky_mode = 1
+
+[node name="Camera2" type="Camera3D" parent="."]
+transform = Transform3D(0.824126, -0.324877, 0.463973, 0, 0.819152, 0.573576, -0.566406, -0.472699, 0.675085, 467.47, 199.91, -354.408)
+visible = false
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.857167, 0.515038, 0, -0.515038, 0.857167, 14.8, 69.615, 15.432)
+current = true
+fov = 50.0
+script = ExtResource("58_xwgtj")
