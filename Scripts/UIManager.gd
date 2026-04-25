@@ -10,22 +10,31 @@ var fleet_list_container: VBoxContainer
 var currently_displayed_category: String = ""
 
 var player_resources: Dictionary = {
-	"energy": 1500, "minerals": 500, "goods": 200, 
-	"alloys": 150, "exotic": 0, "control": 50, "research": 100
+	"energy credits": 1500, "minerals": 500, "goods": 200, 
+	"alloys": 150, "exotic matter": 0, "political capital": 50, "research": 100
 }
 var resource_incomes: Dictionary = {
-	"energy": 45, "minerals": 15, "goods": 5, 
-	"alloys": 3, "exotic": 0, "control": 1, "research": 10
+	"energy credits": 45, "minerals": 15, "goods": 5, 
+	"alloys": 3, "exotic matter": 0, "political capital": 1, "research": 10
 }
 
-var resource_keys = ["energy", "minerals", "goods", "alloys", "exotic", "control", "research"]
+var resource_keys = ["energy credits", "minerals", "goods", "alloys", "exotic matter", "political capital", "research"]
+var resource_image_map = {
+	"energy credits": "energy",
+	"minerals": "minerals",
+	"goods": "goods",
+	"alloys": "alloys",
+	"exotic matter": "exotic",
+	"political capital": "control",
+	"research": "research"
+}
 var resource_colors = [
-	Color(1.0, 0.9, 0.2), # Energy
+	Color(1.0, 0.9, 0.2), # Energy Credits
 	Color(1.0, 0.4, 0.3), # Minerals
 	Color(0.8, 0.6, 0.3), # Goods
 	Color(0.8, 0.4, 0.9), # Alloys
-	Color(0.2, 0.8, 1.0), # Exotic
-	Color(0.9, 0.8, 0.5), # Control
+	Color(0.2, 0.8, 1.0), # Exotic Matter
+	Color(0.9, 0.8, 0.5), # Political Capital
 	Color(0.3, 0.9, 0.5)  # Research
 ]
 var top_bar_labels = {}
@@ -70,6 +79,9 @@ func build_top_bar():
 		
 		var res_hbox = HBoxContainer.new()
 		res_hbox.add_theme_constant_override("separation", 8)
+		res_hbox.mouse_filter = Control.MOUSE_FILTER_PASS
+		res_hbox.mouse_entered.connect(show_tooltip.bind(key.capitalize()))
+		res_hbox.mouse_exited.connect(hide_tooltip)
 		hbox.add_child(res_hbox)
 		
 		var icon_rect = TextureRect.new()
@@ -77,7 +89,8 @@ func build_top_bar():
 		icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		
-		var tex = load("res://Resources/icon_" + key + ".png")
+		var img_key = resource_image_map.get(key, key)
+		var tex = load("res://Resources/icon_" + img_key + ".png")
 		if tex:
 			icon_rect.texture = tex
 		else:

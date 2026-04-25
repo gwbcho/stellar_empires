@@ -103,7 +103,7 @@ Spacestation_Weapon_Torpedo.obj::Mesh::5723773904007956451::1777073901::17770739
 ::res://Assets/Bob/::1777073844
 ::res://Assets/Bob/Blend/::1777073996
 Bob.blend::PackedScene::128338873297361024::1777073844::1777073996::1::::<><><>0<>0<>2b6e62a5d0d9f608535e55cd5e3245ab<>res://.godot/imported/Bob.blend-0966e2e978b7fecee8b61e2e70da9e0e.scn::
-::res://Assets/Bob/Blend/textures/::1777073996
+::res://Assets/Bob/Blend/textures/::1777074035
 Bob_Orange.png::CompressedTexture2D::6791432560394015798::1777073996::1777074035::1::::<><><>0<>0<>5f5691763fd99d1314e7e6b3a76deb2a<>res://.godot/imported/Bob_Orange.png-269ba8b7be6b9b53a37dd0a5c49fd121.ctex::
 ::res://Assets/Bob/FBX/::1777073996
 Bob.fbx::PackedScene::6983463835684339629::1777073844::1777073996::1::::<><><>0<>0<>d4aa056206586261980a0e1e269b37f1<>res://.godot/imported/Bob.fbx-3d8ec4f733259fcd55201b60a622671e.scn::
@@ -121,7 +121,7 @@ Bob_Red.png::CompressedTexture2D::9177585670387528320::1777073844::1777073978::1
 ::res://Assets/Challenger/::1777073844
 ::res://Assets/Challenger/Blend/::1777073994
 Challenger.blend::PackedScene::7068123521196645696::1777073844::1777073994::1::::<><><>0<>0<>8141538ac41b7b269362d04f0030c4a6<>res://.godot/imported/Challenger.blend-48df020a38a063da87fb0470e0bda6b2.scn::
-::res://Assets/Challenger/Blend/textures/::1777073994
+::res://Assets/Challenger/Blend/textures/::1777074035
 Challenger_Orange.png::CompressedTexture2D::4450308866128659912::1777073994::1777074035::1::::<><><>0<>0<>095d633457b8af1e63050bc4be143454<>res://.godot/imported/Challenger_Orange.png-e1d498ab1bdfa7afe8ee88327029cbda.ctex::
 ::res://Assets/Challenger/FBX/::1777073994
 Challenger.fbx::PackedScene::1411219204234473539::1777073844::1777073994::1::::<><><>0<>0<>f1251a431aef871f1acc4bc5b2b13836<>res://.godot/imported/Challenger.fbx-786ed9dc62b3a54a66ba13c1a0d7992a.scn::
@@ -139,7 +139,7 @@ Challenger_Red.png::CompressedTexture2D::6012520147571348586::1777073844::177707
 ::res://Assets/Dispatcher/::1777073844
 ::res://Assets/Dispatcher/Blend/::1777073990
 Dispatcher.blend::PackedScene::7570924154933402823::1777073844::1777073990::1::::<><><>0<>0<>c00233f65d6c27b0469d73aad83c8ffe<>res://.godot/imported/Dispatcher.blend-ea32ce67e536b3f1f5c149b83cf005db.scn::
-::res://Assets/Dispatcher/Blend/textures/::1777073989
+::res://Assets/Dispatcher/Blend/textures/::1777074035
 Dispatcher_Orange.png::CompressedTexture2D::3139977806056100179::1777073989::1777074035::1::::<><><>0<>0<>15e8fd438b21e587073bc6c715d3da07<>res://.godot/imported/Dispatcher_Orange.png-f92d0f6dc02aebad8deec293c0cfea03.ctex::
 ::res://Assets/Dispatcher/FBX/::1777073989
 Dispatcher.fbx::PackedScene::2991370611830933288::1777073844::1777073989::1::::<><><>0<>0<>a8c28e44a509f7f0f985ff93d32652f8<>res://.godot/imported/Dispatcher.fbx-92722cde441020a418f609605652a21a.scn::
@@ -157,7 +157,7 @@ Dispatcher_Red.png::CompressedTexture2D::4766245305558541982::1777073844::177707
 ::res://Assets/Executioner/::1777073845
 ::res://Assets/Executioner/Blend/::1777074008
 Executioner.blend::PackedScene::2513357423091968765::1777073844::1777074008::1::::<><><>0<>0<>eb649e6f1872d48520ad1d55f5c3a26c<>res://.godot/imported/Executioner.blend-3968a8673d4b595ca5cb25dcfdd878ae.scn::
-::res://Assets/Executioner/Blend/textures/::1777074008
+::res://Assets/Executioner/Blend/textures/::1777074035
 Executioner_Orange.png::CompressedTexture2D::6128510787620033005::1777074008::1777074035::1::::<><><>0<>0<>57e4aaf201f34d66e9addd47e895171a<>res://.godot/imported/Executioner_Orange.png-6d2f543f96e11284de7c7529c1291a81.ctex::
 ::res://Assets/Executioner/FBX/::1777074008
 Executioner.fbx::PackedScene::783023904191641547::1777073844::1777074008::1::::<><><>0<>0<>7d62b5f14738fcbf8d555247146318a5<>res://.godot/imported/Executioner.fbx-54e0e952220214909afc6baa317b3cb9.scn::
@@ -175,7 +175,7 @@ Executioner_Red.png::CompressedTexture2D::2547150462924001047::1777073845::17770
 ::res://Assets/Imperial/::1777073845
 ::res://Assets/Imperial/Blend/::1777074006
 Imperial.blend::PackedScene::8781956236859058016::1777073845::1777074006::1::::<><><>0<>0<>a66c5a2c75646cd87f9f024e3b2a3270<>res://.godot/imported/Imperial.blend-06cd7189e7205f9c6c7f95468936e6a9.scn::
-::res://Assets/Imperial/Blend/textures/::1777074006
+::res://Assets/Imperial/Blend/textures/::1777074035
 Imperial_Orange.png::CompressedTexture2D::9127323537004656795::1777074006::1777074035::1::::<><><>0<>0<>f0fe7302167813f94db0be93e550b6ac<>res://.godot/imported/Imperial_Orange.png-be045a50549ac6120165a653ddad987a.ctex::
 ::res://Assets/Imperial/FBX/::1777074006
 Imperial.fbx::PackedScene::3732430059199870066::1777073845::1777074006::1::::<><><>0<>0<>dcdf50d668e5285b491e61dc3affee81<>res://.godot/imported/Imperial.fbx-4713772443829f4640843b924f038861.scn::
@@ -193,7 +193,7 @@ Imperial_Red.png::CompressedTexture2D::5490431107511673027::1777073845::17770739
 ::res://Assets/Insurgent/::1777073842
 ::res://Assets/Insurgent/Blend/::1777074002
 Insurgent.blend::PackedScene::6792029936266744958::1777073842::1777074002::1::::<><><>0<>0<>223d949cd80fb18b56cfcd6fc08f142c<>res://.godot/imported/Insurgent.blend-7e591d5f025920823ac3dbc71578040e.scn::
-::res://Assets/Insurgent/Blend/textures/::1777074002
+::res://Assets/Insurgent/Blend/textures/::1777074035
 Insurgent_Orange.png::CompressedTexture2D::2472089052114933339::1777074002::1777074035::1::::<><><>0<>0<>7bdfd6f8a52d14e2bb070e402f125f4e<>res://.godot/imported/Insurgent_Orange.png-07e3a506b8f64d1ae659b7a7628294c8.ctex::
 ::res://Assets/Insurgent/FBX/::1777074002
 Insurgent.fbx::PackedScene::2168017962456730519::1777073842::1777074002::1::::<><><>0<>0<>678d7dd4df9207286344dc5fb8326c80<>res://.godot/imported/Insurgent.fbx-55f1a82d7b00d27621aad8615283d1a0.scn::
@@ -211,7 +211,7 @@ Insurgent_Red.png::CompressedTexture2D::5765510823240468354::1777073842::1777073
 ::res://Assets/Omen/::1777073842
 ::res://Assets/Omen/Blend/::1777074000
 Omen.blend::PackedScene::3567717660798147101::1777073842::1777074000::1::::<><><>0<>0<>0fbffd48468c69736a68cad4849f09f0<>res://.godot/imported/Omen.blend-fc6057d8fe3c72e827a58fa40fa7cdb6.scn::
-::res://Assets/Omen/Blend/textures/::1777074000
+::res://Assets/Omen/Blend/textures/::1777074035
 Omen_Orange.png::CompressedTexture2D::1167795410623230937::1777074000::1777074035::1::::<><><>0<>0<>a943fc469ebe8d6c9a6ed7a164a9a619<>res://.godot/imported/Omen_Orange.png-f3477638c86895dd25472c64b97f40c1.ctex::
 ::res://Assets/Omen/FBX/::1777074000
 Omen.fbx::PackedScene::1533949785214940991::1777073842::1777074000::1::::<><><>0<>0<>34ff1d37a74f0cbee7c11e777fa815ae<>res://.godot/imported/Omen.fbx-c66561c3746c919393fda4f3bbe6e505.scn::
@@ -229,7 +229,7 @@ Omen_Red.png::CompressedTexture2D::7971412482326349187::1777073842::1777073977::
 ::res://Assets/Pancake/::1777073843
 ::res://Assets/Pancake/Blend/::1777073999
 Pancake.blend::PackedScene::4537996258074841826::1777073843::1777073999::1::::<><><>0<>0<>01ab553dc9304ca627e964d41edac676<>res://.godot/imported/Pancake.blend-49eada3d434df852f80264fa5e5feb57.scn::
-::res://Assets/Pancake/Blend/textures/::1777073998
+::res://Assets/Pancake/Blend/textures/::1777074035
 Pancake_Orange.png::CompressedTexture2D::3535142546897186054::1777073998::1777074035::1::::<><><>0<>0<>5caad4673ba622dc429b19bbc6ac90d0<>res://.godot/imported/Pancake_Orange.png-950449fb22351a73454f48567d00915c.ctex::
 ::res://Assets/Pancake/FBX/::1777073998
 Pancake.fbx::PackedScene::7621545623830105811::1777073843::1777073998::1::::<><><>0<>0<>f7002676bdebf2ad75ed56403aef55bf<>res://.godot/imported/Pancake.fbx-43c45ef6df53443c3a748062844b18fc.scn::
@@ -247,7 +247,7 @@ Pancake_Red.png::CompressedTexture2D::2412651666434334924::1777073843::177707397
 ::res://Assets/Spitfire/::1777073843
 ::res://Assets/Spitfire/Blend/::1777074004
 Spitfire.blend::PackedScene::5494852343185521778::1777073843::1777074004::1::::<><><>0<>0<>7cef4d7bebb22720686c02545c00b883<>res://.godot/imported/Spitfire.blend-35581cf85bc11d906e48b54c561a0f19.scn::
-::res://Assets/Spitfire/Blend/textures/::1777074003
+::res://Assets/Spitfire/Blend/textures/::1777074035
 Spitfire_Orange.png::CompressedTexture2D::8809984755248154497::1777074003::1777074035::1::::<><><>0<>0<>01a920a6dd15e98ceeb66fc69176386a<>res://.godot/imported/Spitfire_Orange.png-678e9f0d1230433baec11492b9003727.ctex::
 ::res://Assets/Spitfire/FBX/::1777074004
 Spitfire.fbx::PackedScene::5179427348506464920::1777073843::1777074004::1::::<><><>0<>0<>1a6e7706b7ab3e30741a4d9723ec9097<>res://.godot/imported/Spitfire.fbx-9f04507c6c05d15cc568af74143ff4e4.scn::
@@ -265,7 +265,7 @@ Spitfire_Red.png::CompressedTexture2D::6963383394931463024::1777073843::17770739
 ::res://Assets/Striker/::1777073843
 ::res://Assets/Striker/Blend/::1777073988
 Striker.blend::PackedScene::4505499858705657391::1777073843::1777073988::1::::<><><>0<>0<>5d2c01848b661827093c8b4b1e556798<>res://.godot/imported/Striker.blend-f5375d9df0893f3ae6afd3091e2dadca.scn::
-::res://Assets/Striker/Blend/textures/::1777073987
+::res://Assets/Striker/Blend/textures/::1777074035
 Striker_Orange.png::CompressedTexture2D::1976734957443863541::1777073987::1777074035::1::::<><><>0<>0<>998b062044a66bb89e6f11283e27425b<>res://.godot/imported/Striker_Orange.png-bf7166055a37db7736741cfef9241115.ctex::
 ::res://Assets/Striker/FBX/::1777073983
 Striker.fbx::PackedScene::287608596444593984::1777073843::1777073983::1::::<><><>0<>0<>bcb7d0c306576ead887ef27279c5e179<>res://.godot/imported/Striker.fbx-392fcd0fbff2b9230a578d731514fb1a.scn::
@@ -283,7 +283,7 @@ Striker_Red.png::CompressedTexture2D::7725449833978253988::1777073843::177707397
 ::res://Assets/Zenith/::1777073844
 ::res://Assets/Zenith/Blend/::1777073992
 Zenith.blend::PackedScene::5215450070255872797::1777073844::1777073992::1::::<><><>0<>0<>ff18ff23cd1c517c34ba02676a2b1f4b<>res://.godot/imported/Zenith.blend-2562ac762b8eead3897c8f7c7057cd5d.scn::
-::res://Assets/Zenith/Blend/textures/::1777073992
+::res://Assets/Zenith/Blend/textures/::1777074035
 Zenith_Orange.png::CompressedTexture2D::2298153490219029891::1777073992::1777074035::1::::<><><>0<>0<>f8de9f483abdfc810039bdca5a42f9b1<>res://.godot/imported/Zenith_Orange.png-2f6f4b44e9cec05a1658bdd51b208993.ctex::
 ::res://Assets/Zenith/FBX/::1777073992
 Zenith.fbx::PackedScene::654716633371635890::1777073843::1777073992::1::::<><><>0<>0<>c81baca14ac6ca324b18026cb9db9783<>res://.godot/imported/Zenith.fbx-35076ba9cefda901b8674facee91e71e.scn::
@@ -298,7 +298,7 @@ Zenith_Green.png::CompressedTexture2D::3063141651574159450::1777073844::17770739
 Zenith_Orange.png::CompressedTexture2D::8597004269067407430::1777073844::1777073978::1::::<><><>0<>0<>7fc82bf0298e43f07a3781b88bf41b88<>res://.godot/imported/Zenith_Orange.png-43cf2a337e12a90ab58114b9d283f72d.ctex::
 Zenith_Purple.png::CompressedTexture2D::388665286962508260::1777073843::1777073978::1::::<><><>0<>0<>43cdc5802c33546d11a7dbb6d5da91a5<>res://.godot/imported/Zenith_Purple.png-3f683c67ca26d40711a1091cec6c6e70.ctex::
 Zenith_Red.png::CompressedTexture2D::529711647472542357::1777073843::1777073979::1::::<><><>0<>0<>249d9cf7ddef936aa1814f52c77a3950<>res://.godot/imported/Zenith_Red.png-9d266e9df985a1cb111271632b629789.ctex::
-::res://Resources/::1777063753
+::res://Resources/::1777076391
 accretion_disk.jpg::CompressedTexture2D::8941352526275452472::1776471697::1776471747::1::::<><><>0<>0<>84f3dd6d2b8013dd8a27cdc13d325a42<>res://.godot/imported/accretion_disk.jpg-4814ddb6f781219b363e780b0460d657.ctex::
 icon_alloys.png::CompressedTexture2D::1235525208707086860::1776585055::1776585238::1::::<><><>0<>0<>9eb12ed94a5fb78e98f16e00bab1a25e<>res://.godot/imported/icon_alloys.png-c5583cc7ad6ab6dcf39d2d06f73049f7.ctex::
 icon_colonized_planet.png::CompressedTexture2D::3892735503208870994::1776983538::1777008978::1::::<><><>0<>0<>cd017f5cad15d91789837222fc0a7b2e<>res://.godot/imported/icon_colonized_planet.png-5aad366f63d9efc453ed3ce8392be31e.ctex::
@@ -320,6 +320,7 @@ icon_goods.png::CompressedTexture2D::2570170786811411699::1776585004::1776585238
 icon_military_units.png::CompressedTexture2D::7629859321293637093::1776668370::1776668554::1::::<><><>0<>0<>1c027c2808ea90dd232fbff1a2891baa<>res://.godot/imported/icon_military_units.png-fdee6f2e7875b479cc3579ca448f5904.ctex::
 icon_minerals.png::CompressedTexture2D::6428364571376692025::1776584960::1776585238::1::::<><><>0<>0<>de9a76fe8bce85a80dd2be7111f5dfb3<>res://.godot/imported/icon_minerals.png-a70bdb69be63f0ad9ea45d6952324b75.ctex::
 icon_research.png::CompressedTexture2D::1174167621869786144::1776585213::1776585238::1::::<><><>0<>0<>96d2b4b6d5e1b091e1529409badb0658<>res://.godot/imported/icon_research.png-5beea83a403441fe4916eafe01915e69.ctex::
+icon_science_fleet.png::CompressedTexture2D::907458288815821300::1777076528::1777078932::1::::<><><>0<>0<>65f98b754685ffd14cf301b90096ddc0<>res://.godot/imported/icon_science_fleet.png-8c2924b60968cfea0a1f97fcf7683952.ctex::
 icon_science_units.png::CompressedTexture2D::5235014595324890978::1776668328::1776668554::1::::<><><>0<>0<>76645f5cc19611441b846314f461da18<>res://.godot/imported/icon_science_units.png-d72c7d091eae3038d8e4cad23822fb08.ctex::
 milky_way_backdrop.png::CompressedTexture2D::3854133983892753367::1776465113::1776464844::0::::<><><>0<>0<>7523fcd4fc5fe0fe4ce708cb068db74e<>::
 system_skybox.jpg::CompressedTexture2D::5050079441441269821::1776493325::1776493357::1::::<><><>0<>0<>6b1256893a6164912b9ae1e1602451d0<>res://.godot/imported/system_skybox.jpg-bc946ad13615cce4c71c13dc7761a680.ctex::
@@ -327,10 +328,10 @@ system_skybox.jpg::CompressedTexture2D::5050079441441269821::1776493325::1776493
 Main.tscn::PackedScene::141823155825462846::1776493718::0::1::::<><><>0<>0<><>::res://Scripts/GalaxyGenerator.gd
 ::res://Scripts/::1776552819
 CameraController.gd::GDScript::4540729580890086164::1776555415::0::1::::CameraController<>Camera3D<><>0<>0<><>::
-FleetManager.gd::GDScript::7617959189944151479::1777073808::0::1::::FleetManager<>Node3D<><>0<>0<><>::
+FleetManager.gd::GDScript::7617959189944151479::1777075364::0::1::::FleetManager<>Node3D<><>0<>0<><>::
 GalaxyGenerator.gd::GDScript::5713005417608538804::1777063731::0::1::::GalaxyGenerator<>Node3D<><>0<>0<><>::
 TechSystem.gd::GDScript::7043487090305563852::1776465351::0::1::::TechSystem<>Node<><>0<>0<><>::
-UIManager.gd::GDScript::5689890067149327395::1777073792::0::1::::UIManager<>CanvasLayer<><>0<>0<><>::
+UIManager.gd::GDScript::5689890067149327395::1777076547::0::1::::UIManager<>CanvasLayer<><>0<>0<><>::
 ::res://Shaders/::1776580179
 black_hole_equator.gdshader::Shader::6613302975487563348::1776580704::0::1::::<><><>0<>0<><>::
 black_hole_halo.gdshader::Shader::1376789018599669992::1776580707::0::1::::<><><>0<>0<><>::
