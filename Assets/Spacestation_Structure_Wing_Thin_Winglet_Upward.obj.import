@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://baw2nhrfs8yxe"
+path="res://.godot/imported/Spacestation_Structure_Wing_Thin_Winglet_Upward.obj-7448291075bd43dee30a04d7fd01a49c.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Spacestation_Structure_Wing_Thin_Winglet_Upward.obj-7448291075bd43dee30a04d7fd01a49c.mesh"]
+
+source_file="res://Assets/Spacestation_Structure_Wing_Thin_Winglet_Upward.obj"
+dest_files=["res://.godot/imported/Spacestation_Structure_Wing_Thin_Winglet_Upward.obj-7448291075bd43dee30a04d7fd01a49c.mesh", "res://.godot/imported/Spacestation_Structure_Wing_Thin_Winglet_Upward.obj-7448291075bd43dee30a04d7fd01a49c.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

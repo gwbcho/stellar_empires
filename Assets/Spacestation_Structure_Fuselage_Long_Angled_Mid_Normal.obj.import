@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://bbdx1mob43g51"
+path="res://.godot/imported/Spacestation_Structure_Fuselage_Long_Angled_Mid_Normal.obj-387f99eae0efb4f1a436ed3572002405.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Spacestation_Structure_Fuselage_Long_Angled_Mid_Normal.obj-387f99eae0efb4f1a436ed3572002405.mesh"]
+
+source_file="res://Assets/Spacestation_Structure_Fuselage_Long_Angled_Mid_Normal.obj"
+dest_files=["res://.godot/imported/Spacestation_Structure_Fuselage_Long_Angled_Mid_Normal.obj-387f99eae0efb4f1a436ed3572002405.mesh", "res://.godot/imported/Spacestation_Structure_Fuselage_Long_Angled_Mid_Normal.obj-387f99eae0efb4f1a436ed3572002405.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

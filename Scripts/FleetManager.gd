@@ -300,6 +300,11 @@ func _apply_selection(fleets: Array[Dictionary]):
 		
 	if galaxy_generator.has_method("clear_planet_selection"):
 		galaxy_generator.clear_planet_selection()
+		
+	if selected_fleets.size() > 0:
+		var uim = get_node_or_null("/root/Main/CanvasLayer")
+		if uim and uim.has_method("open_and_scroll_to_fleet"):
+			uim.open_and_scroll_to_fleet(selected_fleets[0])
 
 func set_selection(fleets: Array):
 	var typed_fleets: Array[Dictionary] = []

@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://l0jmtv7veu8f"
+path="res://.godot/imported/Spacestation_Structure_Fuselage_Straight_Band.obj-b5def9799c96112b2595e4065780ae2c.mesh"
+
+[deps]
+
+files=["res://.godot/imported/Spacestation_Structure_Fuselage_Straight_Band.obj-b5def9799c96112b2595e4065780ae2c.mesh"]
+
+source_file="res://Assets/Spacestation_Structure_Fuselage_Straight_Band.obj"
+dest_files=["res://.godot/imported/Spacestation_Structure_Fuselage_Straight_Band.obj-b5def9799c96112b2595e4065780ae2c.mesh", "res://.godot/imported/Spacestation_Structure_Fuselage_Straight_Band.obj-b5def9799c96112b2595e4065780ae2c.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1, 1, 1)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

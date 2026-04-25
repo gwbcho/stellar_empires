@@ -1,0 +1,44 @@
+[remap]
+
+importer="texture"
+type="CompressedTexture2D"
+uid="uid://cx7x0iqjfau1s"
+path.s3tc="res://.godot/imported/Insurgent_Insurgent_Orange.png-011bf982b46d8cf6c91b3256436b44ea.s3tc.ctex"
+metadata={
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
+}
+generator_parameters={
+"md5": "02655c3bbd5d2653ce237155b85017c4"
+}
+
+[deps]
+
+source_file="res://Assets/Insurgent/glTF/Insurgent_Insurgent_Orange.png"
+dest_files=["res://.godot/imported/Insurgent_Insurgent_Orange.png-011bf982b46d8cf6c91b3256436b44ea.s3tc.ctex"]
+
+[params]
+
+compress/mode=2
+compress/high_quality=false
+compress/lossy_quality=0.7
+compress/uastc_level=0
+compress/rdo_quality_loss=0.0
+compress/hdr_compression=1
+compress/normal_map=0
+compress/channel_pack=0
+mipmaps/generate=true
+mipmaps/limit=-1
+roughness/mode=0
+roughness/src_normal=""
+process/channel_remap/red=0
+process/channel_remap/green=1
+process/channel_remap/blue=2
+process/channel_remap/alpha=3
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=0

@@ -5,6 +5,7 @@ class_name UIManager
 var following_mouse: bool = false
 
 var fleet_list_panel: PanelContainer
+var fleet_list_scroll: ScrollContainer
 var fleet_list_container: VBoxContainer
 var currently_displayed_category: String = ""
 
@@ -30,6 +31,7 @@ var resource_colors = [
 var top_bar_labels = {}
 
 func _ready():
+	tooltip_label.z_index = 4096
 	tooltip_label.hide()
 	build_top_bar()
 	build_bottom_left_menu()
@@ -148,6 +150,7 @@ func build_bottom_left_menu():
 	scroll.set_anchors_preset(Control.PRESET_FULL_RECT)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	fleet_list_panel.add_child(scroll)
+	fleet_list_scroll = scroll
 	
 	fleet_list_container = VBoxContainer.new()
 	fleet_list_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -280,6 +283,56 @@ func _on_fleet_category_pressed(category: String):
 				time_lbl.set_meta("fleet_ref", f)
 				vbox.add_child(time_lbl)
 				
+				if category == "construction":
+					var action_box = HBoxContainer.new()
+					action_box.add_theme_constant_override("separation", 5)
+					action_box.visible = f.get("selected", false) 
+					item_box.set_meta("action_box_ref", action_box)
+					
+					var icons = [
+						{"path": "res://Resources/icon_fleet_construct.png", "tooltip": "Construct"},
+						{"path": "res://Resources/icon_fleet_disband.png", "tooltip": "Disband Fleet"},
+						{"path": "res://Resources/icon_fleet_wormhole_jump.png", "tooltip": "Wormhole Jump (Tech Required)", "disabled": true}
+					]
+					
+					for ic_data in icons:
+						var btn = TextureButton.new()
+						var ic_img = Image.new()
+						if ic_img.load(ic_data["path"]) == OK:
+							btn.texture_normal = ImageTexture.create_from_image(ic_img)
+						btn.ignore_texture_size = true
+						btn.stretch_mode = TextureButton.STRETCH_KEEP_ASPECT_CENTERED
+						btn.custom_minimum_size = Vector2(50, 50)
+						
+						btn.mouse_entered.connect(show_tooltip.bind(ic_data["tooltip"]))
+						btn.mouse_exited.connect(hide_tooltip)
+						
+						# Give a solid black background manually
+						var bg = Panel.new()
+						var s = StyleBoxFlat.new()
+						s.bg_color = Color(0,0,0,1)
+						bg.add_theme_stylebox_override("panel", s)
+						bg.set_anchors_preset(Control.PRESET_FULL_RECT)
+						bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+						btn.add_child(bg)
+						bg.show_behind_parent = true
+						
+						if ic_data.get("disabled", false):
+							btn.disabled = true
+							btn.modulate = Color(0.5, 0.5, 0.5, 0.8)
+						else:
+							# Inject dynamic kinetic structural color reactivity for user feedback inherently
+							btn.button_down.connect(func(): btn.modulate = Color(0.6, 0.6, 0.6))
+							btn.button_up.connect(func(): btn.modulate = Color(1.0, 1.0, 1.0))
+							btn.mouse_entered.connect(func(): btn.modulate = Color(1.2, 1.2, 1.2))
+							btn.mouse_exited.connect(func(): btn.modulate = Color(1.0, 1.0, 1.0))
+							
+							btn.pressed.connect(func(): print("Constructor Action Clicked: ", ic_data["tooltip"], " on fleet ", f.get("name", "Unknown")))
+							
+						action_box.add_child(btn)
+						
+					vbox.add_child(action_box)
+				
 				fleet_list_container.add_child(item_box)
 				
 				var small_hs = HSeparator.new()
@@ -374,6 +427,35 @@ func _process(_delta):
 									if name_lbl is Button: name_lbl.add_theme_color_override("font_color", Color(0.2, 1.0, 0.5, 1.0))
 								else:
 									if name_lbl is Button: name_lbl.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+								
+								if item_box.has_meta("action_box_ref"):
+									var a_box = item_box.get_meta("action_box_ref")
+									if is_instance_valid(a_box):
+										a_box.visible = is_sel
+
+func open_and_scroll_to_fleet(f_target: Dictionary):
+	if not f_target.has("fleet_class"): return
+	var category = f_target["fleet_class"]
+	
+	if currently_displayed_category != category or not fleet_list_panel.visible:
+		_on_fleet_category_pressed(category)
+		
+	# Wait exactly two frames for dynamic UI reflow recalculations universally
+	await get_tree().process_frame
+	await get_tree().process_frame
+	
+	if not fleet_list_scroll or not is_instance_valid(fleet_list_scroll): return
+	
+	for item_box in fleet_list_container.get_children():
+		if item_box is PanelContainer and item_box.get_child_count() > 0:
+			var vbox = item_box.get_child(0)
+			if vbox is VBoxContainer and vbox.get_child_count() > 1:
+				var loc_lbl = vbox.get_child(1)
+				if loc_lbl.has_meta("fleet_ref"):
+					var mapped_f = loc_lbl.get_meta("fleet_ref")
+					if mapped_f == f_target:
+						fleet_list_scroll.ensure_control_visible(item_box)
+						return
 
 func show_tooltip(text: String):
 	tooltip_label.text = text
