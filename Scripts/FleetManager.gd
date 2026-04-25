@@ -110,7 +110,7 @@ func _process(delta: float):
 					
 					var new_ring_rad = max(275.0, sqrt(new_star["mass"]) * 275.0)
 					var entry_pos = new_star["pos"] - (travel_dir * new_ring_rad)
-					entry_pos.y = 15.0 
+					entry_pos.y = galaxy_generator.get_system_plane_height(fleet["hyperlane_path"][0])
 					
 					fleet["local_pos"] = entry_pos
 					fleet["target_pos"] = entry_pos
@@ -137,7 +137,7 @@ func _process(delta: float):
 						t_dir.y = 0
 						t_dir = t_dir.normalized()
 						var edge_pos = new_star["pos"] + (t_dir * new_ring_rad)
-						edge_pos.y = 15.0
+						edge_pos.y = galaxy_generator.get_system_plane_height(fleet["system_index"])
 						
 						order_fleet_move(fleet, edge_pos)
 						fleet["jump_target"] = fleet["hyperlane_path"][1]
@@ -204,7 +204,8 @@ func _unhandled_input(event):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		if selected_fleets.size() > 0:
 			if current_rendered_system != -1:
-				var intersection_plane = Plane(Vector3.UP, 15.0)
+				var plane_y = galaxy_generator.star_data[current_rendered_system].get("fleet_plane_height", 15.0)
+				var intersection_plane = Plane(Vector3.UP, plane_y)
 				var click_hit = intersection_plane.intersects_ray(camera.project_ray_origin(event.position), camera.project_ray_normal(event.position))
 				if click_hit != null:
 					var c_star = galaxy_generator.star_data[current_rendered_system]
@@ -415,7 +416,7 @@ func dispatch_fleet_to_system_pos(fleet: Dictionary, target_system: int, target_
 			t_dir.y = 0
 			t_dir = t_dir.normalized()
 			var entry_pos = c_star["pos"] - (t_dir * ring_rad)
-			entry_pos.y = 15.0
+			entry_pos.y = galaxy_generator.get_system_plane_height(target_system)
 			
 			_spawn_pending_system_waypoint(fleet, entry_pos, target_pos)
 	else:
@@ -537,10 +538,14 @@ func create_fleet(sys_index: int, start_local_pos: Vector3, fleet_class: String 
 			
 	var fleet_name = fleet_class.capitalize() + " Fleet " + str(class_count + 1)
 	
+	var p_y = 15.0
+	if is_instance_valid(galaxy_generator):
+		p_y = galaxy_generator.get_system_plane_height(sys_index)
+		
 	var data = {
 		"system_index": sys_index,
-		"local_pos": Vector3(start_local_pos.x, 15.0, start_local_pos.z),
-		"target_pos": Vector3(start_local_pos.x, 15.0, start_local_pos.z),
+		"local_pos": Vector3(start_local_pos.x, p_y, start_local_pos.z),
+		"target_pos": Vector3(start_local_pos.x, p_y, start_local_pos.z),
 		"is_moving": false,
 		"speed": 18.0,
 		"selected": false,
@@ -571,7 +576,7 @@ func order_intersystem_jump(fleet: Dictionary, path: Array, final_dest: int):
 		
 		var ring_rad = max(275.0, sqrt(c_star["mass"]) * 275.0)
 		var edge_pos = c_star["pos"] + Vector3(dir.x * ring_rad, 0, dir.z * ring_rad)
-		edge_pos.y = 15.0
+		edge_pos.y = galaxy_generator.get_system_plane_height(curr_idx)
 		
 		order_fleet_move(fleet, edge_pos)
 		fleet["jump_target"] = path[1]
@@ -599,7 +604,7 @@ func render_system_fleets(sys_index: int):
 				t_dir.y = 0
 				t_dir = t_dir.normalized()
 				var entry_pos = c_star["pos"] - (t_dir * ring_rad)
-				entry_pos.y = 15.0
+				entry_pos.y = galaxy_generator.get_system_plane_height(sys_index)
 				_spawn_pending_system_waypoint(fleet, entry_pos, fleet["final_local_target"])
 
 func _instantiate_fleet_geometry(fleet: Dictionary):

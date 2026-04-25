@@ -843,6 +843,39 @@ func set_galactic_view():
 		# Visually pulsing the tracking matrix explicitly so it can never be mistaken for generic stars
 		create_tween().bind_node(galaxy_return_marker).set_loops().tween_property(galaxy_return_marker, "rotation:y", PI * 2.0, 8.0).as_relative()
 		
+func get_system_plane_height(star_idx: int) -> float:
+	if star_idx < 0 or star_idx >= star_data.size(): return 15.0
+	if star_data[star_idx].has("fleet_plane_height"):
+		return star_data[star_idx]["fleet_plane_height"]
+	
+	var center_star = star_data[star_idx]
+	var c_rad = 5.0
+	if center_star["type"] == "Black Hole":
+		c_rad = center_star["mass"] * 1.5
+	elif center_star["type"] == "Neutron Star":
+		c_rad = center_star["size"] * 4.0
+	else:
+		match center_star["type"]:
+			"Red Dwarf (M)": c_rad = 2.0
+			"Orange Dwarf (K)": c_rad = 3.5
+			"Yellow Dwarf (G)": c_rad = 5.0
+			"White Main Seq (F/A)": c_rad = 7.5
+			"White Dwarf": c_rad = 1.0
+			"Blue Giant (O/B)": c_rad = 25.0
+			"Red Giant": c_rad = 45.0
+			
+	var p_height = c_rad
+	var p_data = get_system_planets(star_idx)
+	for p_info in p_data:
+		var p_rad = p_info["radius"]
+		if p_info.has("has_rings") and p_info["has_rings"]:
+			p_rad *= p_info["ring_outer"]
+		p_height = max(p_height, p_rad)
+		
+	p_height += 5.0
+	star_data[star_idx]["fleet_plane_height"] = p_height
+	return p_height
+
 func set_system_view(star_index: int):
 	# Hide macro universe UI/paths, but leave background logic running natively if needed
 	if hyperlane_mesh_instance: hyperlane_mesh_instance.hide()
@@ -1095,14 +1128,53 @@ func set_system_view(star_index: int):
 		add_child(u_node)
 		system_view_nodes.append(u_node)
 	
+	var c_rad = 5.0
+	if center_star["type"] == "Black Hole":
+		c_rad = center_star["mass"] * 1.5
+	elif center_star["type"] == "Neutron Star":
+		c_rad = center_star["size"] * 4.0
+	else:
+		match center_star["type"]:
+			"Red Dwarf (M)": c_rad = 2.0
+			"Orange Dwarf (K)": c_rad = 3.5
+			"Yellow Dwarf (G)": c_rad = 5.0
+			"White Main Seq (F/A)": c_rad = 7.5
+			"White Dwarf": c_rad = 1.0
+			"Blue Giant (O/B)": c_rad = 25.0
+			"Red Giant": c_rad = 45.0
+			
+	var star_area = Area3D.new()
+	star_area.position = center_star["pos"]
+	var star_col = CollisionShape3D.new()
+	var star_shape = SphereShape3D.new()
+	# Mathematically enforce a rigid 30.0 unit minimum collision radius to prevent microscopic stars from becoming unclickable
+	star_shape.radius = max(c_rad * 1.5, 30.0)
+	star_col.shape = star_shape
+	star_area.add_child(star_col)
+	star_area.input_event.connect(_on_system_star_input_event.bind(star_index))
+	add_child(star_area)
+	system_view_nodes.append(star_area)
+	
+	# Dynamic System Plane Height bounds logic
+	var fleet_plane_height = get_system_plane_height(star_index)
+	
+	if center_star.get("name", "") == "Sol":
+		var station_scene = load("res://Assets/GodotAsset/RawModel/SpaceStation/ChargeStation.glb")
+		if station_scene:
+			var station = station_scene.instantiate()
+			station.position = center_star["pos"] + Vector3(0, fleet_plane_height, 0)
+			station.scale = Vector3(0.07, 0.07, 0.07)
+			add_child(station)
+			system_view_nodes.append(station)
+
 	# PHASE 5: Procedural Planetary Generation
 	var prng = RandomNumberGenerator.new()
 	# Binding hash seed directly to the star_index rigidly guarantees identical system configurations natively 
 	prng.seed = hash(str(star_index) + "_system_seed") 
-	
-	var planet_data = get_system_planets(star_index)
 	# Structurally duplicate rng state structurally consuming identical math to guarantee rotation sequence avoids collision!
 	for i in range(100): prng.randf()
+
+	var planet_data = get_system_planets(star_index)
 
 	for i in range(planet_data.size()):
 		var p_info = planet_data[i]
@@ -1393,6 +1465,15 @@ func clear_planet_selection():
 		focused_planet_marker.queue_free()
 	focused_planet_ring = null
 
+func _on_system_star_input_event(_camera, event, _event_position, _normal, _shape_idx, s_idx):
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
+		if is_instance_valid(fleet_manager) and fleet_manager.selected_fleets.size() > 0:
+			var plane_y = star_data[s_idx].get("fleet_plane_height", 15.0)
+			var target_pos = Vector3(star_data[s_idx]["pos"].x, plane_y, star_data[s_idx]["pos"].z)
+			for f in fleet_manager.selected_fleets:
+				fleet_manager.dispatch_fleet_to_system_pos(f, fleet_manager.current_rendered_system, target_pos)
+			get_viewport().set_input_as_handled()
+
 func _on_planet_input_event(camera, event, event_position, normal, shape_idx, p_node: Node3D, p_outer_boundary: float, p_ring: MeshInstance3D):
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 		# Single click natively confirmed! Reset old ring gracefully
@@ -1428,7 +1509,8 @@ func _on_planet_input_event(camera, event, event_position, normal, shape_idx, p_
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 		# If a fleet is locally natively selected structurally intercepting planetary right clicks explicitly!
 		if is_instance_valid(fleet_manager) and fleet_manager.selected_fleets.size() > 0:
-			var dest = Vector3(p_node.global_position.x, 15.0, p_node.global_position.z)
+			var plane_y = star_data[fleet_manager.current_rendered_system].get("fleet_plane_height", 15.0)
+			var dest = Vector3(p_node.global_position.x, plane_y, p_node.global_position.z)
 			for f in fleet_manager.selected_fleets:
 				fleet_manager.dispatch_fleet_to_system_pos(f, fleet_manager.current_rendered_system, dest)
 			get_viewport().set_input_as_handled()
